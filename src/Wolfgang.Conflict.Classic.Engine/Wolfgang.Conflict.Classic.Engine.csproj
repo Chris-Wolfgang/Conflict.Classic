@@ -27,4 +27,8 @@
     <EmbeddedResource Include="Units\unit-types.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
 </Project>
