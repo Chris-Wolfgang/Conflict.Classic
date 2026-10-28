@@ -1,0 +1,9 @@
+# Overrides applied when compiling semgrep.txt (uv pip compile --override).
+#
+# mcp: semgrep 1.182.1 pins mcp==1.29.0, which is affected by the MCP Python SDK
+# advisory "Unbounded Session Accumulation in StreamableHTTP Transport" (fixed in
+# 1.30.0; Dependabot alerts #35/#36). semgrep imports mcp only for its `semgrep mcp`
+# server, never in `semgrep scan`, which is all semgrep.yaml runs. semgrep.yaml installs
+# with --no-deps, so pip does not re-apply semgrep's exact pin. Delete this line once a
+# semgrep release allows mcp >= 1.30.0.
+mcp~=1.30.0
