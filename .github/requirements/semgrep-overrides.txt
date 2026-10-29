@@ -7,3 +7,20 @@
 # with --no-deps, so pip does not re-apply semgrep's exact pin. Delete this line once a
 # semgrep release allows mcp >= 1.30.0.
 mcp~=1.30.0
+#
+# opentelemetry: semgrep 1.182.1 pins opentelemetry-api/-sdk/-exporter-otlp-proto-http
+# ~=1.37.0, affected by "Unbounded tracestate parsing in opentelemetry-api"
+# (GHSA-xcq7-p3pf-p88h, fixed in 1.45.1; Dependabot alert #37). The whole family is
+# overridden together so the stable (1.45.1) and beta (0.66b1) packages stay matched.
+# `pip check` flags only semgrep's own pins; `semgrep scan` ran clean locally on these pins.
+# Delete these lines once a semgrep release allows opentelemetry-api >= 1.45.1.
+opentelemetry-api~=1.45.1
+opentelemetry-sdk~=1.45.1
+opentelemetry-exporter-otlp-proto-http~=1.45.1
+opentelemetry-exporter-otlp-proto-common~=1.45.1
+opentelemetry-proto~=1.45.1
+opentelemetry-instrumentation==0.66b1
+opentelemetry-instrumentation-requests==0.66b1
+opentelemetry-instrumentation-threading==0.66b1
+opentelemetry-semantic-conventions==0.66b1
+opentelemetry-util-http==0.66b1
