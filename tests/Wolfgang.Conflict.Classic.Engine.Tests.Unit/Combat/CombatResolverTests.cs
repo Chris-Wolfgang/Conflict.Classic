@@ -39,7 +39,7 @@ public class CombatResolverTests
     }
 
     [Fact]
-    public void Tank_attacks_infantry_inflicts_damage_no_counter()
+    public void Resolve_when_tank_attacks_infantry_inflicts_damage_and_defender_counters()
     {
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
         var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
@@ -70,7 +70,7 @@ public class CombatResolverTests
     }
 
     [Fact]
-    public void Fighter_strafes_tank_for_chip_damage_no_counter()
+    public void Resolve_when_fighter_strafes_tank_inflicts_chip_damage_and_defender_counters()
     {
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Fighter, new HexCoord(0, 0));
         var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Tank,    new HexCoord(1, 0));
@@ -84,7 +84,7 @@ public class CombatResolverTests
         // Tank's coaxial MG can plink back at the Fighter (CompleteDefeat
         // tier for the Tank too) — both take light chip damage.
         Assert.True(result.DefenderCountered);
-        Assert.True(result.DamageToAttacker > 0);
+        Assert.Equal(1, result.DamageToAttacker);
     }
 
     [Fact]
