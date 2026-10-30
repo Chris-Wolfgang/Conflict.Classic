@@ -30,13 +30,13 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     [InlineData(BuildingKind.AirFactory, UnitCategory.Helicopter, true)]
     [InlineData(BuildingKind.AirFactory, UnitCategory.BattleTank, false)]
     [InlineData(BuildingKind.City, UnitCategory.Infantry, false)]
-    public void CanBuildCategoryAt_matches_design(BuildingKind building, UnitCategory category, bool expected)
+    public void CanBuildCategoryAt_when_category_and_building_are_given_matches_design(BuildingKind building, UnitCategory category, bool expected)
     {
         Assert.Equal(expected, ProductionRules.CanBuildCategoryAt(building, category));
     }
 
     [Fact]
-    public void ProducibleAt_factory_for_blue_returns_curated_six()
+    public void ProducibleAt_when_blue_uses_land_factory_returns_curated_six()
     {
         var producible = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
 
@@ -55,7 +55,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ProducibleAt_airbase_for_red_returns_infantry_plus_five_air()
+    public void ProducibleAt_when_red_uses_airbase_returns_infantry_plus_five_air()
     {
         var producible = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.AirFactory, Side.Red);
 
@@ -71,7 +71,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Both_factories_lead_with_infantry()
+    public void ProducibleAt_when_any_factory_is_given_lists_infantry_first()
     {
         var blueLand = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
         var redLand  = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Red);
@@ -85,7 +85,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Rosters_are_complementary_between_sides()
+    public void ProducibleAt_when_sides_are_compared_rosters_are_complementary()
     {
         // Every map-present unit must be in its side's factory roster, and
         // every roster slot on one side must have a counterpart slot on the
@@ -112,7 +112,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ProducibleAt_returns_roster_sorted_by_price_ascending()
+    public void ProducibleAt_when_called_returns_roster_sorted_by_price_ascending()
     {
         var blueLand = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
 
@@ -124,7 +124,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task AffordableAt_filters_unlocked_slots_by_FP()
+    public async Task AffordableAt_when_funds_are_limited_filters_unlocked_slots_by_FP()
     {
         // F.P. doesn't get spent on a build, but it gates which roster
         // slots are visible — units above the player's current F.P. are
@@ -148,7 +148,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Infantry_costs_zero_FP_per_manual()
+    public void ProductionCost_when_unit_is_infantry_is_zero_FP_per_manual()
     {
         // Per the NES manual (page 25), infantry F.P. = 0. This makes
         // infantry naturally always-available without any engine special case.
@@ -157,7 +157,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task BuildUnit_succeeds_for_infantry_when_broke()
+    public async Task BuildUnit_when_side_is_broke_succeeds_for_infantry()
     {
         var mission = await MissionLoader.LoadMission01Async();
         var engine = new GameEngine();
@@ -178,7 +178,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task AffordableAt_always_includes_infantry_even_when_broke()
+    public async Task AffordableAt_when_side_is_broke_still_includes_infantry()
     {
         // Infantry has cost 0 so it is always visible regardless of F.P.
         var mission = await MissionLoader.LoadMission01Async();
@@ -200,7 +200,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void CanSideProduce_true_when_a_unit_has_not_moved()
+    public void CanSideProduce_when_a_unit_has_not_moved_returns_true()
     {
         var unit = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Infantry, HexCoord.Zero);
 
@@ -208,7 +208,7 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void CanSideProduce_false_when_all_units_have_moved()
+    public void CanSideProduce_when_all_units_have_moved_returns_false()
     {
         var unit = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Infantry, HexCoord.Zero) with { HasMoved = true };
 

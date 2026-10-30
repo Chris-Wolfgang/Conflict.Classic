@@ -14,7 +14,7 @@ public class AttackRulesTests : IClassFixture<CatalogFixture>
         => Unit.FullStrength(new UnitId(id), side, type, coord) with { HasAttacked = hasAttacked };
 
     [Fact]
-    public void CanAttack_adjacent_enemy_with_positive_damage_is_legal()
+    public void CanAttack_when_adjacent_enemy_takes_positive_damage_returns_true()
     {
         var atk = Make(1, Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
         var def = Make(2, Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
@@ -23,7 +23,7 @@ public class AttackRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void CanAttack_same_side_is_illegal()
+    public void CanAttack_when_defender_is_same_side_returns_false()
     {
         var atk = Make(1, Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
         var def = Make(2, Side.Blue, TestCatalog.Infantry, new HexCoord(1, 0));
@@ -32,7 +32,7 @@ public class AttackRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void CanAttack_non_adjacent_is_illegal()
+    public void CanAttack_when_defender_is_not_adjacent_returns_false()
     {
         var atk = Make(1, Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
         var def = Make(2, Side.Red,  TestCatalog.Infantry, new HexCoord(3, 0));
@@ -41,7 +41,7 @@ public class AttackRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void CanAttack_already_attacked_is_illegal()
+    public void CanAttack_when_attacker_has_attacked_returns_false()
     {
         var atk = Make(1, Side.Blue, TestCatalog.Tank, new HexCoord(0, 0), hasAttacked: true);
         var def = Make(2, Side.Red,  TestCatalog.Tank, new HexCoord(1, 0));
@@ -50,7 +50,7 @@ public class AttackRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void CanAttack_allows_every_adjacent_cross_side_pair()
+    public void CanAttack_when_tank_targets_adjacent_enemy_fighter_returns_true()
     {
         // Every unit has a machine gun, so even a Battle Tank may take a
         // (poor) shot at an aircraft. The matchup tier handles effectiveness.

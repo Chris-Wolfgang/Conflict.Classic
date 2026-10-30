@@ -11,7 +11,7 @@ public class MapDefinitionTests
             .Select(c => new Tile(c, Terrain.Plains, Building: null, Owner: null));
 
     [Fact]
-    public void Constructor_with_complete_tile_set_succeeds()
+    public void Constructor_when_tile_set_is_complete_succeeds()
     {
         var map = new MapDefinition("test", 4, 3, AllPlains(4, 3));
 
@@ -26,7 +26,7 @@ public class MapDefinitionTests
     [InlineData(1, 2)]
     [InlineData(2, -1)]
     [InlineData(3, 1)]
-    public void Contains_accepts_offset_rectangular_coords(int q, int r)
+    public void Contains_when_coord_is_inside_offset_rectangle_returns_true(int q, int r)
     {
         var map = new MapDefinition("test", 4, 3, AllPlains(4, 3));
 
@@ -40,7 +40,7 @@ public class MapDefinitionTests
     [InlineData(0, 3)]
     [InlineData(2, -2)]
     [InlineData(2, 2)]
-    public void Contains_rejects_coords_outside_rectangular_bounds(int q, int r)
+    public void Contains_when_coord_is_outside_rectangular_bounds_returns_false(int q, int r)
     {
         var map = new MapDefinition("test", 4, 3, AllPlains(4, 3));
 
@@ -48,7 +48,7 @@ public class MapDefinitionTests
     }
 
     [Fact]
-    public void Constructor_rejects_tile_outside_bounds()
+    public void Constructor_when_tile_is_outside_bounds_throws()
     {
         var bad = AllPlains(4, 3).Concat(new[] { new Tile(new HexCoord(5, 0), Terrain.Plains, Building: null, Owner: null) });
 
@@ -56,7 +56,7 @@ public class MapDefinitionTests
     }
 
     [Fact]
-    public void Constructor_rejects_duplicate_coords()
+    public void Constructor_when_coords_are_duplicated_throws()
     {
         var dup = AllPlains(4, 3).ToList();
         dup.Add(new Tile(dup[0].Coord, Terrain.Plains, Building: null, Owner: null));
@@ -65,7 +65,7 @@ public class MapDefinitionTests
     }
 
     [Fact]
-    public void Constructor_rejects_missing_coords()
+    public void Constructor_when_coords_are_missing_throws()
     {
         var missing = AllPlains(4, 3).Skip(1);
 
@@ -73,7 +73,7 @@ public class MapDefinitionTests
     }
 
     [Fact]
-    public void Constructor_rejects_nonpositive_dimensions()
+    public void Constructor_when_dimensions_are_not_positive_throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new MapDefinition("test", 0, 3, []));
         Assert.Throws<ArgumentOutOfRangeException>(() => new MapDefinition("test", 4, 0, []));
@@ -83,7 +83,7 @@ public class MapDefinitionTests
     [InlineData(4, 3, 12)]
     [InlineData(12, 10, 120)]
     [InlineData(1, 1, 1)]
-    public void EnumerateCoords_yields_width_times_height_unique_coords(int width, int height, int expected)
+    public void EnumerateCoords_when_dimensions_are_given_yields_width_times_height_unique_coords(int width, int height, int expected)
     {
         var coords = MapDefinition.EnumerateCoords(width, height).ToList();
 

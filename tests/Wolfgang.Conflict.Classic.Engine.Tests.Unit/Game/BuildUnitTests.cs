@@ -24,7 +24,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     private static HexCoord BlueAirbase { get; } = new(1, 5);
 
     [Fact]
-    public async Task BuildUnit_queues_a_pending_order_without_deducting_funds()
+    public async Task BuildUnit_when_order_is_legal_queues_pending_order_without_deducting_funds()
     {
         // Building is free per the original game. F.P. ProductionCost is
         // the loser-penalty value, not a price tag.
@@ -41,7 +41,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task BuildUnit_pending_order_materialises_at_start_of_next_blue_turn()
+    public async Task BuildUnit_when_next_blue_turn_starts_materialises_pending_order()
     {
         var (engine, state) = await StartMission01WithFunds();
 
@@ -62,7 +62,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task BuildUnit_at_airbase_is_blocked_if_a_unit_is_standing_on_it()
+    public async Task BuildUnit_when_unit_stands_on_airbase_is_blocked()
     {
         var (engine, state) = await StartMission01WithFunds();
         // The starting placements no longer park a unit on the Blue Airbase
@@ -90,7 +90,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task BuildUnit_with_zero_funds_still_succeeds()
+    public async Task BuildUnit_when_funds_are_zero_still_succeeds()
     {
         // Building is free; funds are irrelevant to whether a build is legal.
         var (engine, state) = await StartMission01WithFunds(blueFunds: 0);
@@ -119,7 +119,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Newly_built_unit_is_not_on_the_map_until_next_turn()
+    public async Task BuildUnit_when_order_is_queued_unit_is_not_on_map_until_next_turn()
     {
         // Deferred materialisation makes the original "fresh unit can't
         // act on the build turn" rule implicit — the unit simply doesn't
@@ -132,7 +132,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task A_side_can_only_build_one_unit_per_turn()
+    public async Task BuildUnit_when_side_already_built_this_turn_throws()
     {
         // The manual restricts production to a single unit per turn across
         // all of a side's factories.
@@ -148,7 +148,7 @@ public class BuildUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task EndTurn_clears_the_one_build_per_turn_flag()
+    public async Task EndTurn_when_side_built_this_turn_clears_one_build_per_turn_flag()
     {
         var (engine, state) = await StartMission01WithFunds();
 
