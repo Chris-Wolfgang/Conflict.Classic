@@ -195,12 +195,9 @@ public class ProductionRulesTests
         Assert.Contains(land, d => d.Category == UnitCategory.Infantry);
         Assert.Contains(air,  d => d.Category == UnitCategory.Infantry);
         // And only infantry — everything else is locked at 0 F.P.
-        Assert.All(land, d => Assert.True(d.Category == UnitCategory.Infantry));
-        Assert.All(air,  d => Assert.True(d.Category == UnitCategory.Infantry));
+        Assert.All(land, d => Assert.Equal(UnitCategory.Infantry, d.Category));
+        Assert.All(air,  d => Assert.Equal(UnitCategory.Infantry, d.Category));
     }
-
-    private static bool RelationsTableIsAir(UnitCategory c)
-        => Engine.Combat.RelationsTable.IsAir(c);
 
     [Fact]
     public void CanSideProduce_true_when_a_unit_has_not_moved()

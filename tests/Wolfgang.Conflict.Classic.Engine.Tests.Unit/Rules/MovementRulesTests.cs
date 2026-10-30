@@ -136,7 +136,8 @@ public class MovementRulesTests
 
         var reachable = MovementRules.GetReachable(state, tank);
 
-        // Tank moves 5 hexes; on open plains expect many reachable hexes.
-        Assert.True(reachable.Count > 6);
+        // Tank moves 5 hexes; on 10x5 open plains from (2,1) that reaches every
+        // in-bounds hex within 5 steps except its own: 39 hexes.
+        Assert.Equal(39, reachable.Count);
     }
 }
