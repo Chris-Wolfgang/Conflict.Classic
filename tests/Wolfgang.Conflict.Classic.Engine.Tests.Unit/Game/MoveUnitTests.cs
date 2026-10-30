@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 
-public class MoveUnitTests
+public class MoveUnitTests : IClassFixture<CatalogFixture>
 {
     private static async Task<(GameEngine engine, GameState state, Unit blueInfantry)> Setup()
     {

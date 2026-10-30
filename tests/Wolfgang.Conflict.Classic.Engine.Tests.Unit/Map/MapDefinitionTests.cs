@@ -21,28 +21,30 @@ public class MapDefinitionTests
         Assert.Equal(12, map.Tiles.Count);
     }
 
-    [Fact]
-    public void Contains_accepts_offset_rectangular_coords()
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 2)]
+    [InlineData(2, -1)]
+    [InlineData(3, 1)]
+    public void Contains_accepts_offset_rectangular_coords(int q, int r)
     {
         var map = new MapDefinition("test", 4, 3, AllPlains(4, 3));
 
-        Assert.True(map.Contains(new HexCoord(0, 0)));
-        Assert.True(map.Contains(new HexCoord(1, 2)));
-        Assert.True(map.Contains(new HexCoord(2, -1)));
-        Assert.True(map.Contains(new HexCoord(3, 1)));
+        Assert.True(map.Contains(new HexCoord(q, r)));
     }
 
-    [Fact]
-    public void Contains_rejects_coords_outside_rectangular_bounds()
+    [Theory]
+    [InlineData(-1, 0)]
+    [InlineData(4, 0)]
+    [InlineData(0, -1)]
+    [InlineData(0, 3)]
+    [InlineData(2, -2)]
+    [InlineData(2, 2)]
+    public void Contains_rejects_coords_outside_rectangular_bounds(int q, int r)
     {
         var map = new MapDefinition("test", 4, 3, AllPlains(4, 3));
 
-        Assert.False(map.Contains(new HexCoord(-1, 0)));
-        Assert.False(map.Contains(new HexCoord(4, 0)));
-        Assert.False(map.Contains(new HexCoord(0, -1)));
-        Assert.False(map.Contains(new HexCoord(0, 3)));
-        Assert.False(map.Contains(new HexCoord(2, -2)));
-        Assert.False(map.Contains(new HexCoord(2, 2)));
+        Assert.False(map.Contains(new HexCoord(q, r)));
     }
 
     [Fact]

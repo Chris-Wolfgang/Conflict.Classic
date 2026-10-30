@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Units;
 
-public class UnitTests
+public class UnitTests : IClassFixture<CatalogFixture>
 {
     [Fact]
     public void FullStrength_initializes_from_catalog_definition()

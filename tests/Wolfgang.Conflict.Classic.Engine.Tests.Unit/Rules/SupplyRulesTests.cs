@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Rules;
 
-public class SupplyRulesTests
+public class SupplyRulesTests : IClassFixture<CatalogFixture>
 {
     private static GameState BuildState(IEnumerable<Tile> tiles, int width, int height, params Unit[] units)
     {
