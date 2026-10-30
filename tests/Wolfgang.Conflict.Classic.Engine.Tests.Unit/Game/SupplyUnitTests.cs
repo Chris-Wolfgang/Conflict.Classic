@@ -31,7 +31,7 @@ public class SupplyUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void SupplyUnit_on_friendly_city_refuels_rearms_and_repairs()
+    public void SupplyUnit_when_unit_is_on_friendly_city_refuels_rearms_and_repairs()
     {
         var engine = new GameEngine();
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(1, 0)) with
@@ -53,7 +53,7 @@ public class SupplyUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void SupplyUnit_twice_throws()
+    public void SupplyUnit_when_unit_already_supplied_this_turn_throws()
     {
         var engine = new GameEngine();
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(1, 0));
@@ -64,7 +64,7 @@ public class SupplyUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void SupplyUnit_off_a_building_throws()
+    public void SupplyUnit_when_unit_is_not_on_a_building_throws()
     {
         var engine = new GameEngine();
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
@@ -74,7 +74,7 @@ public class SupplyUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void SupplyUnit_on_wrong_turn_throws()
+    public void SupplyUnit_when_not_units_turn_throws()
     {
         var engine = new GameEngine();
         var redTank = Unit.FullStrength(new UnitId(1), Side.Red, TestCatalog.Tank, new HexCoord(1, 0));

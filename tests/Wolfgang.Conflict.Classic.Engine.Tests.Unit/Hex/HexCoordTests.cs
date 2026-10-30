@@ -6,13 +6,13 @@ namespace Wolfgang.Conflict.Classic.Engine.Tests.Hex;
 public class HexCoordTests
 {
     [Fact]
-    public void Zero_is_origin()
+    public void Zero_when_read_is_origin()
     {
         Assert.Equal(new HexCoord(0, 0), HexCoord.Zero);
     }
 
     [Fact]
-    public void S_axis_is_negative_sum_of_Q_and_R()
+    public void S_when_read_is_negative_sum_of_Q_and_R()
     {
         var sut = new HexCoord(3, -2);
 
@@ -20,7 +20,7 @@ public class HexCoordTests
     }
 
     [Fact]
-    public void DistanceTo_self_is_zero()
+    public void DistanceTo_when_target_is_self_returns_zero()
     {
         var sut = new HexCoord(2, 5);
 
@@ -32,7 +32,7 @@ public class HexCoordTests
     [InlineData(0, 0, 0, 3, 3)]
     [InlineData(0, 0, 3, -3, 3)]
     [InlineData(1, 1, -2, -2, 6)]
-    public void DistanceTo_matches_known_values(int q1, int r1, int q2, int r2, int expected)
+    public void DistanceTo_when_coords_are_known_returns_expected_distance(int q1, int r1, int q2, int r2, int expected)
     {
         var a = new HexCoord(q1, r1);
         var b = new HexCoord(q2, r2);
@@ -41,7 +41,7 @@ public class HexCoordTests
     }
 
     [Fact]
-    public void DistanceTo_is_symmetric()
+    public void DistanceTo_when_arguments_are_swapped_returns_same_distance()
     {
         var a = new HexCoord(4, -3);
         var b = new HexCoord(-1, 2);
@@ -50,7 +50,7 @@ public class HexCoordTests
     }
 
     [Fact]
-    public void Neighbors_returns_six_distinct_hexes_each_at_distance_one()
+    public void Neighbors_when_called_returns_six_distinct_hexes_each_at_distance_one()
     {
         var sut = new HexCoord(5, 7);
 
@@ -68,7 +68,7 @@ public class HexCoordTests
     [InlineData(HexDirection.West, -1, 0)]
     [InlineData(HexDirection.SouthWest, -1, 1)]
     [InlineData(HexDirection.SouthEast, 0, 1)]
-    public void Neighbor_in_direction_applies_axial_offset(HexDirection direction, int dq, int dr)
+    public void Neighbor_when_direction_is_given_applies_axial_offset(HexDirection direction, int dq, int dr)
     {
         var origin = new HexCoord(10, 20);
 
@@ -78,7 +78,7 @@ public class HexCoordTests
     }
 
     [Fact]
-    public void WithinRange_zero_returns_only_self()
+    public void WithinRange_when_range_is_zero_returns_only_self()
     {
         var sut = new HexCoord(4, 4);
 
@@ -93,7 +93,7 @@ public class HexCoordTests
     [InlineData(2, 19)]
     [InlineData(3, 37)]
     [InlineData(4, 61)]
-    public void WithinRange_n_returns_one_plus_3n_n_plus_one_hexes(int radius, int expectedCount)
+    public void WithinRange_when_range_is_n_returns_one_plus_3n_n_plus_one_hexes(int radius, int expectedCount)
     {
         var hexes = HexCoord.Zero.WithinRange(radius).ToList();
 
@@ -102,13 +102,13 @@ public class HexCoordTests
     }
 
     [Fact]
-    public void WithinRange_negative_throws()
+    public void WithinRange_when_range_is_negative_throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => HexCoord.Zero.WithinRange(-1).ToList());
     }
 
     [Fact]
-    public void ToString_formats_axial_pair()
+    public void ToString_when_called_formats_axial_pair()
     {
         Assert.Equal("(3,-2)", new HexCoord(3, -2).ToString());
     }

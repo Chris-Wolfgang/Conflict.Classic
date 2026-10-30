@@ -16,13 +16,13 @@ public class CaptureRulesTests : IClassFixture<CatalogFixture>
     [InlineData(BuildingKind.Port, true)]
     [InlineData(BuildingKind.Hq, false)]
     [InlineData(BuildingKind.LandFactory, false)]
-    public void IsCapturable_matches_manual_rules(BuildingKind building, bool expected)
+    public void IsCapturable_when_building_kind_is_given_matches_manual_rules(BuildingKind building, bool expected)
     {
         Assert.Equal(expected, CaptureRules.IsCapturable(building));
     }
 
     [Fact]
-    public void ComputeFlips_returns_flip_for_infantry_on_neutral_city()
+    public void ComputeFlips_when_infantry_holds_neutral_city_returns_flip()
     {
         var cityCoord = new HexCoord(1, 0);
         var tiles = MapDefinition.EnumerateCoords(3, 1)
@@ -45,7 +45,7 @@ public class CaptureRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ComputeFlips_does_not_flip_when_infantry_already_owns_building()
+    public void ComputeFlips_when_infantry_already_owns_building_does_not_flip()
     {
         var cityCoord = new HexCoord(1, 0);
         var tiles = MapDefinition.EnumerateCoords(3, 1)
@@ -65,7 +65,7 @@ public class CaptureRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ComputeFlips_any_unit_can_capture_a_city()
+    public void ComputeFlips_when_any_unit_holds_a_city_captures_it()
     {
         // Per the original game, any unit captures — not just infantry.
         var cityCoord = new HexCoord(1, 0);

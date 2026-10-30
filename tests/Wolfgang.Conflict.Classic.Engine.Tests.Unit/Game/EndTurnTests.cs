@@ -10,7 +10,7 @@ namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 public class EndTurnTests : IClassFixture<CatalogFixture>
 {
     [Fact]
-    public async Task EndTurn_swaps_active_side()
+    public async Task EndTurn_when_called_swaps_active_side()
     {
         var engine = new GameEngine();
         var mission = await MissionLoader.LoadMission01Async();
@@ -23,7 +23,7 @@ public class EndTurnTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task EndTurn_twice_increments_turn_number_for_blue()
+    public async Task EndTurn_when_called_twice_increments_turn_number_for_blue()
     {
         var engine = new GameEngine();
         var mission = await MissionLoader.LoadMission01Async();
@@ -36,7 +36,7 @@ public class EndTurnTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task EndTurn_refreshes_per_turn_fields_for_incoming_side()
+    public async Task EndTurn_when_called_refreshes_per_turn_fields_for_incoming_side()
     {
         var engine = new GameEngine();
         var mission = await MissionLoader.LoadMission01Async();
@@ -64,7 +64,7 @@ public class EndTurnTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task EndTurn_grants_income_for_owned_city_and_airbase()
+    public async Task EndTurn_when_side_owns_city_and_airbase_grants_income()
     {
         var engine = new GameEngine();
         var mission = await MissionLoader.LoadMission01Async();
@@ -80,7 +80,7 @@ public class EndTurnTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task EndTurn_drains_one_fuel_from_units_that_moved_this_turn()
+    public async Task EndTurn_when_unit_moved_this_turn_drains_one_fuel()
     {
         var engine = new GameEngine();
         var mission = await MissionLoader.LoadMission01Async();
@@ -98,7 +98,7 @@ public class EndTurnTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task EndTurn_does_not_drain_fuel_for_units_that_did_not_move()
+    public async Task EndTurn_when_unit_did_not_move_does_not_drain_fuel()
     {
         var engine = new GameEngine();
         var mission = await MissionLoader.LoadMission01Async();

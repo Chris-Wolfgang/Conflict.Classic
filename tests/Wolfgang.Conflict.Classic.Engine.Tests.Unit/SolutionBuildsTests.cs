@@ -6,7 +6,7 @@ namespace Wolfgang.Conflict.Classic.Engine.Tests;
 public class SolutionBuildsTests
 {
     [Fact]
-    public void GameEngine_can_be_constructed()
+    public void Constructor_when_called_creates_GameEngine()
     {
         var sut = new GameEngine();
 

@@ -55,7 +55,7 @@ public class CombatResolverTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Defender_killed_does_not_counter()
+    public void Resolve_when_defender_is_killed_defender_does_not_counter()
     {
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
         // Wounded infantry: 5 HP, dies to Tank hit.
@@ -88,7 +88,7 @@ public class CombatResolverTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Defense_terrain_reduces_damage()
+    public void Resolve_when_defender_is_in_forest_terrain_reduces_damage()
     {
         // Same fighters but defender is in a forest hex (defense +3).
         var tiles = MapDefinition.EnumerateCoords(10, 5)

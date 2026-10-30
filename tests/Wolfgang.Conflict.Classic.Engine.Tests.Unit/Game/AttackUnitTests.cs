@@ -33,7 +33,7 @@ public class AttackUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void AttackUnit_marks_attacker_as_having_attacked()
+    public void AttackUnit_when_attack_is_legal_marks_attacker_as_having_attacked()
     {
         var engine = new GameEngine();
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
@@ -47,7 +47,7 @@ public class AttackUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void AttackUnit_destroying_defender_awards_winner_and_penalizes_loser()
+    public void AttackUnit_when_defender_is_destroyed_awards_winner_and_penalizes_loser()
     {
         var engine = new GameEngine();
         // Wounded infantry dies to a Tank hit.
@@ -65,7 +65,7 @@ public class AttackUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void AttackUnit_loser_funds_never_go_below_zero()
+    public void AttackUnit_when_loser_cannot_pay_penalty_funds_stop_at_zero()
     {
         var engine = new GameEngine();
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
@@ -79,7 +79,7 @@ public class AttackUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void AttackUnit_friendly_fire_throws()
+    public void AttackUnit_when_target_is_friendly_throws()
     {
         // Friendly fire is rejected by AttackRules regardless of pairing.
         var engine = new GameEngine();
@@ -91,7 +91,7 @@ public class AttackUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void AttackUnit_not_your_turn_throws()
+    public void AttackUnit_when_not_attackers_turn_throws()
     {
         var engine = new GameEngine();
         var redAtk = Unit.FullStrength(new UnitId(1), Side.Red,  TestCatalog.Tank,     new HexCoord(0, 0));
@@ -102,7 +102,7 @@ public class AttackUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void RandomSeed_advances_after_an_attack()
+    public void AttackUnit_when_attack_resolves_advances_RandomSeed()
     {
         var engine = new GameEngine();
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));

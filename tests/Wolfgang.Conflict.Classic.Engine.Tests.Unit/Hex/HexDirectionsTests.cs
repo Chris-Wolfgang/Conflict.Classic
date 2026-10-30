@@ -6,7 +6,7 @@ namespace Wolfgang.Conflict.Classic.Engine.Tests.Hex;
 public class HexDirectionsTests
 {
     [Fact]
-    public void All_contains_six_distinct_directions()
+    public void All_when_read_contains_six_distinct_directions()
     {
         Assert.Equal(6, HexDirections.All.Count);
         Assert.Equal(6, HexDirections.All.Distinct().Count());
@@ -19,7 +19,7 @@ public class HexDirectionsTests
     [InlineData(HexDirection.West, -1, 0)]
     [InlineData(HexDirection.SouthWest, -1, 1)]
     [InlineData(HexDirection.SouthEast, 0, 1)]
-    public void Offset_returns_axial_delta(HexDirection direction, int dq, int dr)
+    public void Offset_when_direction_is_known_returns_axial_delta(HexDirection direction, int dq, int dr)
     {
         var offset = HexDirections.Offset(direction);
 
@@ -27,7 +27,7 @@ public class HexDirectionsTests
     }
 
     [Fact]
-    public void Offset_unknown_throws()
+    public void Offset_when_direction_is_unknown_throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => HexDirections.Offset((HexDirection)42));
     }
