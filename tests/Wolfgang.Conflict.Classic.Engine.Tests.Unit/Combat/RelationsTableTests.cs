@@ -21,6 +21,10 @@ public class RelationsTableTests
     [InlineData(UnitCategory.Attacker, UnitCategory.Helicopter)]
     public void CanEngage_is_always_true(UnitCategory attacker, UnitCategory defender)
     {
+        // CanEngage is constant true by design: every unit carries at least a
+        // machine gun, so any pairing may engage and the matchup tier decides
+        // effectiveness. Kept deliberately: it fails if an engagement gate is
+        // ever reintroduced without updating this doctrine.
         Assert.True(RelationsTable.CanEngage(attacker, defender));
     }
 

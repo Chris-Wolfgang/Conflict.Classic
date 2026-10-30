@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Strategy;
 
-public class GreedyAiStrategyTests
+public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
 {
     private static GameState OpenState(params Unit[] units)
     {

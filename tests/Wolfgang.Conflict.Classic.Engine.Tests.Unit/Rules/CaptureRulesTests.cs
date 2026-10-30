@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Rules;
 
-public class CaptureRulesTests
+public class CaptureRulesTests : IClassFixture<CatalogFixture>
 {
     [Theory]
     [InlineData(BuildingKind.City, true)]
