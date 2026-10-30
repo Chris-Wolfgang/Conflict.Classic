@@ -19,7 +19,7 @@ public class RelationsTableTests
     [InlineData(UnitCategory.SupplyVehicle, UnitCategory.Infantry)]
     [InlineData(UnitCategory.SupplyPlane, UnitCategory.Fighter)]
     [InlineData(UnitCategory.Attacker, UnitCategory.Helicopter)]
-    public void CanEngage_is_always_true(UnitCategory attacker, UnitCategory defender)
+    public void CanEngage_when_any_category_pair_is_given_returns_true(UnitCategory attacker, UnitCategory defender)
     {
         // CanEngage is constant true by design: every unit carries at least a
         // machine gun, so any pairing may engage and the matchup tier decides
@@ -34,13 +34,13 @@ public class RelationsTableTests
     [InlineData(UnitCategory.Fighter, UnitCategory.Fighter, MatchupTier.Equal)]
     [InlineData(UnitCategory.BattleMissileLauncher, UnitCategory.BattleTank, MatchupTier.AtAdvantage)]
     [InlineData(UnitCategory.Infantry, UnitCategory.BattleTank, MatchupTier.CompleteDefeat)]
-    public void Outlook_matches_design(UnitCategory attacker, UnitCategory defender, MatchupTier expected)
+    public void Outlook_when_category_pair_is_given_returns_designed_tier(UnitCategory attacker, UnitCategory defender, MatchupTier expected)
     {
         Assert.Equal(expected, RelationsTable.Outlook(attacker, defender));
     }
 
     [Fact]
-    public void BaseAttack_is_positive_for_every_pair()
+    public void BaseAttack_when_any_category_pair_is_given_returns_positive_value()
     {
         // Every unit carries at least a machine gun, so every matchup yields
         // a positive (if sometimes very small) base attack value.
@@ -56,7 +56,7 @@ public class RelationsTableTests
     }
 
     [Fact]
-    public void BaseAttack_is_higher_for_strong_matchups_than_weak_ones()
+    public void BaseAttack_when_matchup_is_strong_returns_more_than_weak_matchup()
     {
         var strong = RelationsTable.BaseAttack(UnitCategory.BattleTank, UnitCategory.Infantry);
         var weak = RelationsTable.BaseAttack(UnitCategory.Infantry, UnitCategory.Fighter);
@@ -70,7 +70,7 @@ public class RelationsTableTests
     [InlineData(UnitCategory.SupplyPlane, true)]
     [InlineData(UnitCategory.BattleTank, false)]
     [InlineData(UnitCategory.Infantry, false)]
-    public void IsAir_classifies_categories(UnitCategory category, bool expected)
+    public void IsAir_when_category_is_given_returns_whether_it_is_air(UnitCategory category, bool expected)
     {
         Assert.Equal(expected, RelationsTable.IsAir(category));
     }

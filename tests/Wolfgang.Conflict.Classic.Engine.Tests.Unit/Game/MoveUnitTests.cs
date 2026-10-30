@@ -18,7 +18,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task MoveUnit_advances_unit_and_deducts_path_cost_from_moves_only()
+    public async Task MoveUnit_when_destination_is_reachable_advances_unit_and_deducts_path_cost_from_moves_only()
     {
         var (engine, state, infantry) = await Setup();
         var dest = new HexCoord(3, 6); // one step east from (2, 6) on plains
@@ -33,7 +33,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task MoveUnit_twice_in_one_turn_throws()
+    public async Task MoveUnit_when_unit_already_moved_this_turn_throws()
     {
         var (engine, state, infantry) = await Setup();
 
@@ -45,7 +45,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task GetLegalMoves_is_empty_after_a_unit_has_moved()
+    public async Task GetLegalMoves_when_unit_has_moved_returns_empty()
     {
         var (engine, state, infantry) = await Setup();
 
@@ -55,7 +55,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task MoveUnit_to_unreachable_hex_throws()
+    public async Task MoveUnit_when_destination_is_unreachable_throws()
     {
         var (engine, state, infantry) = await Setup();
 
@@ -74,7 +74,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task MoveUnit_unknown_id_throws()
+    public async Task MoveUnit_when_unit_id_is_unknown_throws()
     {
         var (engine, state, _) = await Setup();
 
@@ -83,7 +83,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task MoveUnit_to_same_hex_throws()
+    public async Task MoveUnit_when_destination_is_current_hex_throws()
     {
         var (engine, state, infantry) = await Setup();
 
@@ -92,7 +92,7 @@ public class MoveUnitTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task GetLegalMoves_for_blue_infantry_includes_adjacent_plains()
+    public async Task GetLegalMoves_when_unit_is_blue_infantry_includes_adjacent_plains()
     {
         var (engine, state, infantry) = await Setup();
 

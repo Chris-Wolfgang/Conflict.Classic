@@ -28,7 +28,7 @@ public class VictoryRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void With_both_commanders_alive_no_winner()
+    public void DetermineWinner_when_both_commanders_are_alive_returns_no_winner()
     {
         var blue = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0), isCommander: true);
         var red = Unit.FullStrength(new UnitId(2), Side.Red, TestCatalog.Tank, new HexCoord(3, 0), isCommander: true);
@@ -37,7 +37,7 @@ public class VictoryRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Blue_wins_when_red_commander_dead()
+    public void DetermineWinner_when_red_commander_is_dead_returns_blue()
     {
         var blue = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0), isCommander: true);
         // Red has only a non-commander unit alive.
@@ -47,7 +47,7 @@ public class VictoryRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Red_wins_when_blue_routed()
+    public void DetermineWinner_when_blue_is_routed_returns_red()
     {
         var red = Unit.FullStrength(new UnitId(1), Side.Red, TestCatalog.Tank, new HexCoord(0, 0), isCommander: true);
 

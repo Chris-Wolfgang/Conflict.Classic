@@ -28,7 +28,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Attacks_adjacent_enemy_when_possible()
+    public async Task ChooseNextActionAsync_when_enemy_is_adjacent_attacks_it()
     {
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
         var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
@@ -42,7 +42,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Moves_toward_distant_enemy_when_no_adjacent_target()
+    public async Task ChooseNextActionAsync_when_no_adjacent_target_moves_toward_distant_enemy()
     {
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
         var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Tank, new HexCoord(8, 0));
@@ -57,7 +57,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Commander_defends_itself_against_adjacent_enemy()
+    public async Task ChooseNextActionAsync_when_enemy_is_adjacent_to_commander_attacks_it()
     {
         // The commander is the "H" — losing it ends the game. It won't
         // march out looking for trouble, but if an enemy walks up to it,
@@ -73,7 +73,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Commander_does_not_move_toward_enemy()
+    public async Task ChooseNextActionAsync_when_commander_has_no_adjacent_enemy_ends_turn_without_moving()
     {
         // With only the commander available, the AI should EndTurn rather
         // than march the HQ unit into harm's way.
@@ -87,7 +87,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task AI_first_turn_builds_at_airbase_with_most_expensive_affordable_unit()
+    public async Task ChooseNextActionAsync_when_first_turn_builds_most_expensive_affordable_unit_at_airbase()
     {
         // Difficulty 1 doctrine: turn 1 = air, turn 2 = land, alternating.
         // The greedy AI also takes the priciest unit it can pay for.
@@ -109,7 +109,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task AI_second_turn_builds_at_land_factory()
+    public async Task ChooseNextActionAsync_when_second_turn_builds_at_land_factory()
     {
         var mission = await MissionLoader.LoadMission01Async();
         var engine = new GameEngine();
@@ -134,7 +134,7 @@ public class GreedyAiStrategyTests : IClassFixture<CatalogFixture>
             s.Winner, s.RandomSeed, s.BuildingHitPoints, s.BuildThisTurn);
 
     [Fact]
-    public async Task Returns_EndTurn_when_no_unit_has_any_action()
+    public async Task ChooseNextActionAsync_when_no_unit_has_any_action_returns_EndTurn()
     {
         var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0))
             with { HasMoved = true, HasAttacked = true };

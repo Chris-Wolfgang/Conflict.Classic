@@ -13,7 +13,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
         await MissionLoader.LoadMission01Async();
 
     [Fact]
-    public async Task Mission01_starts_with_blue_to_move_at_turn_one()
+    public async Task StartGame_when_mission_is_mission01_blue_moves_first_at_turn_one()
     {
         var sut = new GameEngine();
 
@@ -26,7 +26,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Mission01_places_equal_mixed_arms_force_per_side()
+    public async Task StartGame_when_mission_is_mission01_places_equal_mixed_arms_force_per_side()
     {
         var sut = new GameEngine();
 
@@ -41,7 +41,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Each_side_has_exactly_one_commander()
+    public async Task StartGame_when_mission_is_mission01_each_side_has_exactly_one_commander()
     {
         var sut = new GameEngine();
 
@@ -52,7 +52,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Commander_is_a_tank_for_both_sides()
+    public async Task StartGame_when_mission_is_mission01_commander_is_a_tank_for_both_sides()
     {
         var sut = new GameEngine();
 
@@ -68,7 +68,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task All_units_start_at_full_LIFE()
+    public async Task StartGame_when_mission_is_mission01_all_units_start_at_full_LIFE()
     {
         var sut = new GameEngine();
 
@@ -78,7 +78,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Each_unit_id_is_unique()
+    public async Task StartGame_when_mission_is_mission01_each_unit_id_is_unique()
     {
         var sut = new GameEngine();
 
@@ -89,7 +89,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Both_sides_start_with_5000_FP_war_chest()
+    public async Task StartGame_when_mission_is_mission01_both_sides_start_with_5000_FP()
     {
         var sut = new GameEngine();
 
@@ -100,7 +100,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task Building_ownership_falls_back_to_map_for_unmodified_buildings()
+    public async Task GetBuildingOwner_when_building_is_unmodified_falls_back_to_map_owner()
     {
         var mission = await Mission01();
         var sut = new GameEngine();
@@ -115,7 +115,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public async Task GetUnitAt_returns_unit_on_hex_or_null()
+    public async Task GetUnitAt_when_hex_is_occupied_or_empty_returns_unit_or_null()
     {
         var mission = await Mission01();
         var sut = new GameEngine();
@@ -128,14 +128,14 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void StartGame_null_mission_throws()
+    public void StartGame_when_mission_is_null_throws()
     {
         var sut = new GameEngine();
         Assert.Throws<ArgumentNullException>(() => sut.StartGame(mission: null!, 1));
     }
 
     [Fact]
-    public void StartGame_with_duplicate_starting_hex_throws()
+    public void StartGame_when_starting_hexes_are_duplicated_throws()
     {
         var sut = new GameEngine();
         var map = new MapDefinition("two", 2, 1,
@@ -152,7 +152,7 @@ public class StartGameTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void StartGame_with_no_commander_for_a_side_throws()
+    public void StartGame_when_a_side_has_no_commander_throws()
     {
         var sut = new GameEngine();
         var map = new MapDefinition("two", 2, 1,

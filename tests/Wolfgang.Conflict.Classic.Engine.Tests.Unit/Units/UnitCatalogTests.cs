@@ -9,7 +9,7 @@ public class UnitCatalogTests
     private static Task<UnitCatalog> Catalog() => UnitCatalog.LoadEmbeddedAsync();
 
     [Fact]
-    public async Task LoadEmbeddedAsync_loads_full_roster()
+    public async Task LoadEmbeddedAsync_when_called_loads_full_roster()
     {
         var catalog = await Catalog();
 
@@ -17,7 +17,7 @@ public class UnitCatalogTests
     }
 
     [Fact]
-    public async Task Each_side_has_eighteen_units()
+    public async Task ForSide_when_side_is_given_returns_eighteen_units()
     {
         var catalog = await Catalog();
 
@@ -30,7 +30,7 @@ public class UnitCatalogTests
     [InlineData("f4e", "F-4E Phantom II", UnitCategory.Fighter, 10, 6, 8, 5000)]
     [InlineData("us-infantry", "US Infantry", UnitCategory.Infantry, 4, 10, 0, 0)]
     [InlineData("t80", "T-80", UnitCategory.BattleTank, 5, 8, 14, 6000)]
-    public async Task Get_returns_expected_definition(
+    public async Task Get_when_id_is_known_returns_expected_definition(
         string id, string name, UnitCategory category, int moving, int fuel, int shell, int cost)
     {
         var catalog = await Catalog();
@@ -46,7 +46,7 @@ public class UnitCatalogTests
     }
 
     [Fact]
-    public async Task Get_unknown_id_throws()
+    public async Task Get_when_id_is_unknown_throws()
     {
         var catalog = await Catalog();
 
@@ -54,7 +54,7 @@ public class UnitCatalogTests
     }
 
     [Fact]
-    public async Task Only_infantry_and_commando_can_capture()
+    public async Task All_when_enumerated_only_infantry_and_commando_can_capture()
     {
         var catalog = await Catalog();
 
@@ -66,7 +66,7 @@ public class UnitCatalogTests
     }
 
     [Fact]
-    public async Task Battle_tanks_and_fighters_have_maneuver5()
+    public async Task All_when_enumerated_battle_tanks_and_fighters_have_maneuver5()
     {
         var catalog = await Catalog();
 
@@ -78,7 +78,7 @@ public class UnitCatalogTests
     }
 
     [Fact]
-    public async Task ForSide_blue_excludes_red_only_units()
+    public async Task ForSide_when_side_is_blue_excludes_red_only_units()
     {
         var catalog = await Catalog();
 
@@ -89,7 +89,7 @@ public class UnitCatalogTests
     }
 
     [Fact]
-    public async Task All_ids_are_unique()
+    public async Task All_when_enumerated_ids_are_unique()
     {
         var catalog = await Catalog();
 

@@ -6,7 +6,7 @@ namespace Wolfgang.Conflict.Classic.Engine.Tests.Hex;
 public class HexPathTests
 {
     [Fact]
-    public void Constructor_records_start_destination_and_cost()
+    public void Constructor_when_hexes_are_valid_records_start_destination_and_cost()
     {
         var hexes = new[]
         {
@@ -24,7 +24,7 @@ public class HexPathTests
     }
 
     [Fact]
-    public void Indexer_returns_hex_at_position()
+    public void Indexer_when_index_is_valid_returns_hex_at_position()
     {
         var path = new HexPath(new[] { new HexCoord(0, 0), new HexCoord(1, 0) }, 1);
 
@@ -32,7 +32,7 @@ public class HexPathTests
     }
 
     [Fact]
-    public void Enumeration_preserves_order()
+    public void GetEnumerator_when_enumerated_preserves_order()
     {
         var hexes = new[]
         {
@@ -47,19 +47,19 @@ public class HexPathTests
     }
 
     [Fact]
-    public void Constructor_null_hexes_throws()
+    public void Constructor_when_hexes_is_null_throws()
     {
         Assert.Throws<ArgumentNullException>(() => new HexPath(null!, 0));
     }
 
     [Fact]
-    public void Constructor_empty_hexes_throws()
+    public void Constructor_when_hexes_is_empty_throws()
     {
         Assert.Throws<ArgumentException>(() => new HexPath(Array.Empty<HexCoord>(), 0));
     }
 
     [Fact]
-    public void Constructor_negative_cost_throws()
+    public void Constructor_when_cost_is_negative_throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexPath(new[] { HexCoord.Zero }, -1));
     }

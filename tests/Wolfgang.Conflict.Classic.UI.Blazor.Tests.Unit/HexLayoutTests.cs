@@ -7,7 +7,7 @@ namespace Wolfgang.Conflict.Classic.UI.Blazor.Tests.Unit;
 public class HexLayoutTests
 {
     [Fact]
-    public void Centre_for_origin_is_one_hex_in_from_top_left()
+    public void Centre_when_coord_is_origin_is_one_hex_in_from_top_left()
     {
         var c = HexLayout.Centre(new HexCoord(0, 0));
 
@@ -16,7 +16,7 @@ public class HexLayoutTests
     }
 
     [Fact]
-    public void Centre_advances_by_column_stride_in_q()
+    public void Centre_when_q_increases_advances_by_column_stride()
     {
         var c0 = HexLayout.Centre(new HexCoord(0, 0));
         var c1 = HexLayout.Centre(new HexCoord(1, 0));
@@ -25,7 +25,7 @@ public class HexLayoutTests
     }
 
     [Fact]
-    public void BoardSize_for_mission01_dimensions_is_positive()
+    public void BoardSize_when_dimensions_are_mission01_is_positive()
     {
         var (w, h) = HexLayout.BoardSize(12, 10);
 
@@ -34,7 +34,7 @@ public class HexLayoutTests
     }
 
     [Fact]
-    public void PolygonPoints_returns_six_comma_separated_pairs()
+    public void PolygonPoints_when_called_returns_six_comma_separated_pairs()
     {
         var pts = HexLayout.PolygonPoints((100, 100));
 

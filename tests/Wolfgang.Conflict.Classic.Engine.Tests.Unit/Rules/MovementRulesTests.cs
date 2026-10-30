@@ -36,7 +36,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
                 .Select(c => new Tile(c, Terrain.Plains, Building: null, Owner: null)));
 
     [Fact]
-    public void GetReachable_returns_full_radius_on_open_plains()
+    public void GetReachable_when_map_is_open_plains_returns_full_radius()
     {
         var map = AllPlains(10, 5);
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(4, 1));
@@ -51,7 +51,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void GetReachable_excludes_hexes_blocked_by_other_units()
+    public void GetReachable_when_other_units_block_hexes_excludes_them()
     {
         var map = AllPlains(6, 3);
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
@@ -64,7 +64,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void FindPath_returns_null_for_unreachable_destination_over_budget()
+    public void FindPath_when_destination_is_over_budget_returns_null()
     {
         var map = AllPlains(20, 3);
         var infantry = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Infantry, new HexCoord(0, 0));
@@ -77,7 +77,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void FindPath_to_adjacent_plain_costs_one()
+    public void FindPath_when_destination_is_adjacent_plain_costs_one()
     {
         var map = AllPlains(6, 3);
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(2, 1));
@@ -90,7 +90,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void FindPath_through_forest_costs_two_per_hex()
+    public void FindPath_when_route_crosses_forest_costs_two_per_hex()
     {
         var tiles = MapDefinition.EnumerateCoords(6, 3)
             .Select(c => new Tile(c, c.Q == 3 ? Terrain.Forest : Terrain.Plains, Building: null, Owner: null));
@@ -105,7 +105,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void GetReachable_returns_empty_for_unit_with_no_moves_remaining()
+    public void GetReachable_when_unit_has_no_moves_remaining_returns_empty()
     {
         var map = AllPlains(6, 3);
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(2, 1)) with { MovesRemaining = 0 };
@@ -115,7 +115,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void GetReachable_returns_empty_for_unit_at_zero_fuel()
+    public void GetReachable_when_unit_has_zero_fuel_returns_empty()
     {
         // Fuel is a per-turn counter: 0 = can't move this turn at all.
         var map = AllPlains(6, 3);
@@ -126,7 +126,7 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void GetReachable_full_range_when_fuel_is_one()
+    public void GetReachable_when_fuel_is_one_returns_full_range()
     {
         // One unit of fuel buys an entire turn of movement; the budget is
         // MovesRemaining, not Fuel.
