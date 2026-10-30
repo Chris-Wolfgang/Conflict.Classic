@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 
-public class StartGameTests
+public class StartGameTests : IClassFixture<CatalogFixture>
 {
     private static async Task<MissionDefinition> Mission01() =>
         await MissionLoader.LoadMission01Async();

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 
-public class BuildUnitTests
+public class BuildUnitTests : IClassFixture<CatalogFixture>
 {
     private static async Task<(GameEngine engine, GameState state)> StartMission01WithFunds(int blueFunds = 10000)
     {

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 
-public class SupplyUnitTests
+public class SupplyUnitTests : IClassFixture<CatalogFixture>
 {
     private static GameState BuildStateWithFriendlyCity(Unit unit)
     {

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Rules;
 
-public class ProductionRulesTests
+public class ProductionRulesTests : IClassFixture<CatalogFixture>
 {
     private static GameState SingleUnitState(Unit unit)
     {

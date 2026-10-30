@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Combat;
 
-public class CombatResolverTests
+public class CombatResolverTests : IClassFixture<CatalogFixture>
 {
     private sealed class FixedRng(int value) : IRandomSource
     {

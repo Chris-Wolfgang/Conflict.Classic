@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Rules;
 
-public class AttackRulesTests
+public class AttackRulesTests : IClassFixture<CatalogFixture>
 {
     private static Unit Make(int id, Side side, UnitTypeDefinition type, HexCoord coord, bool hasAttacked = false)
         => Unit.FullStrength(new UnitId(id), side, type, coord) with { HasAttacked = hasAttacked };

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Rules;
 
-public class MovementRulesTests
+public class MovementRulesTests : IClassFixture<CatalogFixture>
 {
     private static GameState MakeState(MapDefinition map, params Unit[] units)
     {
