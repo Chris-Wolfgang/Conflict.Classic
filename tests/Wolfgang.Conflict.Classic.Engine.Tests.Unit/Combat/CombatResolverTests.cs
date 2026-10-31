@@ -114,4 +114,50 @@ public class CombatResolverTests : IClassFixture<CatalogFixture>
         // Fighter base vs Fighter = 6, defense = 3, roll = 0 => 3 damage.
         Assert.Equal(3, result.DamageToDefender);
     }
+
+    [Fact]
+    public void Resolve_when_state_is_null_throws_ArgumentNullException()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+
+        Assert.Throws<ArgumentNullException>("state", () => CombatResolver.Resolve(null!, atk, def, new FixedRng(0)));
+    }
+
+    [Fact]
+    public void Resolve_when_attacker_is_null_throws_ArgumentNullException()
+    {
+        var def = Unit.FullStrength(new UnitId(2), Side.Red, TestCatalog.Infantry, new HexCoord(1, 0));
+
+        Assert.Throws<ArgumentNullException>("attacker", () => CombatResolver.Resolve(OpenMapState(def), null!, def, new FixedRng(0)));
+    }
+
+    [Fact]
+    public void Resolve_when_defender_is_null_throws_ArgumentNullException()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
+
+        Assert.Throws<ArgumentNullException>("defender", () => CombatResolver.Resolve(OpenMapState(atk), atk, null!, new FixedRng(0)));
+    }
+
+    [Fact]
+    public void Resolve_when_rng_is_null_throws_ArgumentNullException()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+
+        Assert.Throws<ArgumentNullException>("rng", () => CombatResolver.Resolve(OpenMapState(atk, def), atk, def, null!));
+    }
+
+    [Fact]
+    public void Resolve_when_attack_is_resolved_result_names_both_units()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+
+        var result = CombatResolver.Resolve(OpenMapState(atk, def), atk, def, new FixedRng(0));
+
+        Assert.Equal(atk.Id, result.AttackerId);
+        Assert.Equal(def.Id, result.DefenderId);
+    }
 }

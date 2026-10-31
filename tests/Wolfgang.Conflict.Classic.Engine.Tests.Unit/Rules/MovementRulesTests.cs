@@ -140,4 +140,44 @@ public class MovementRulesTests : IClassFixture<CatalogFixture>
         // in-bounds hex within 5 steps except its own: 39 hexes.
         Assert.Equal(39, reachable.Count);
     }
+
+    [Fact]
+    public void FindPath_when_state_is_null_throws_ArgumentNullException()
+    {
+        var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
+
+        var ex = Assert.Throws<ArgumentNullException>(() => MovementRules.FindPath(null!, tank, new HexCoord(1, 0)));
+
+        Assert.Equal("state", ex.ParamName);
+    }
+
+    [Fact]
+    public void FindPath_when_unit_is_null_throws_ArgumentNullException()
+    {
+        var state = MakeState(AllPlains(2, 1));
+
+        var ex = Assert.Throws<ArgumentNullException>(() => MovementRules.FindPath(state, null!, new HexCoord(1, 0)));
+
+        Assert.Equal("unit", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetReachable_when_state_is_null_throws_ArgumentNullException()
+    {
+        var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
+
+        var ex = Assert.Throws<ArgumentNullException>(() => MovementRules.GetReachable(null!, tank));
+
+        Assert.Equal("state", ex.ParamName);
+    }
+
+    [Fact]
+    public void GetReachable_when_unit_is_null_throws_ArgumentNullException()
+    {
+        var state = MakeState(AllPlains(2, 1));
+
+        var ex = Assert.Throws<ArgumentNullException>(() => MovementRules.GetReachable(state, null!));
+
+        Assert.Equal("unit", ex.ParamName);
+    }
 }
