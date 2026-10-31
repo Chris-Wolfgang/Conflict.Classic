@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using Wolfgang.Conflict.Classic.Engine.Players;
 using Wolfgang.Conflict.Classic.Engine.Units;
 using Xunit;
@@ -95,5 +97,56 @@ public class UnitCatalogTests
 
         var ids = catalog.All.Select(d => d.Id).ToList();
         Assert.Equal(ids.Count, ids.Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public async Task LoadFromStreamAsync_when_stream_is_null_throws_ArgumentNullException()
+    {
+        var ex = await Assert.ThrowsAsync<ArgumentNullException>(() => UnitCatalog.LoadFromStreamAsync(null!));
+
+        Assert.Equal("stream", ex.ParamName);
+    }
+
+    [Fact]
+    public async Task LoadFromStreamAsync_when_json_is_malformed_throws_ArgumentException_wrapping_JsonException()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("{ not json"));
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() => UnitCatalog.LoadFromStreamAsync(stream));
+
+        Assert.IsAssignableFrom<JsonException>(ex.InnerException);
+    }
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("{}")]
+    public async Task LoadFromStreamAsync_when_unitTypes_is_missing_throws_ArgumentException(string json)
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() => UnitCatalog.LoadFromStreamAsync(stream));
+
+        Assert.Equal("stream", ex.ParamName);
+    }
+
+    [Fact]
+    public async Task Get_when_id_is_null_throws_ArgumentNullException()
+    {
+        var catalog = await Catalog();
+
+        var ex = Assert.Throws<ArgumentNullException>(() => catalog.Get(null!));
+
+        Assert.Equal("id", ex.ParamName);
+    }
+
+    [Fact]
+    public async Task Get_when_id_is_m1a1_returns_short_name_and_standard_weapon()
+    {
+        var catalog = await Catalog();
+
+        var def = catalog.Get("m1a1");
+
+        Assert.Equal("M1A1", def.ShortName);
+        Assert.Equal("120mm Gun", def.StandardWeapon);
     }
 }

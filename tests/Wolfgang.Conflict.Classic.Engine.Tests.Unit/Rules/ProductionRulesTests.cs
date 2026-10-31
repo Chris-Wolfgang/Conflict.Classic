@@ -214,4 +214,63 @@ public class ProductionRulesTests : IClassFixture<CatalogFixture>
 
         Assert.False(ProductionRules.CanSideProduce(SingleUnitState(unit), Side.Blue));
     }
+
+    [Theory]
+    [InlineData(BuildingKind.LandFactory, true)]
+    [InlineData(BuildingKind.AirFactory, true)]
+    [InlineData(BuildingKind.Port, true)]
+    [InlineData(BuildingKind.City, false)]
+    [InlineData(BuildingKind.Hq, false)]
+    public void IsProductionBuilding_when_building_is_given_returns_expected(BuildingKind building, bool expected)
+    {
+        Assert.Equal(expected, ProductionRules.IsProductionBuilding(building));
+    }
+
+    [Fact]
+    public void ProducibleAt_when_catalog_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("catalog", () => ProductionRules.ProducibleAt(null!, BuildingKind.LandFactory, Side.Blue));
+    }
+
+    [Fact]
+    public void ProducibleAt_when_building_has_no_roster_returns_empty()
+    {
+        Assert.Empty(ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.City, Side.Blue));
+    }
+
+    [Fact]
+    public void AffordableAt_when_state_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("state", () => ProductionRules.AffordableAt(null!, BuildingKind.LandFactory, Side.Blue));
+    }
+
+    [Fact]
+    public void IsInRoster_when_typeId_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("typeId", () => ProductionRules.IsInRoster(BuildingKind.LandFactory, Side.Blue, null!));
+    }
+
+    [Fact]
+    public void IsInRoster_when_building_has_no_roster_returns_false()
+    {
+        Assert.False(ProductionRules.IsInRoster(BuildingKind.City, Side.Blue, "m1a1"));
+    }
+
+    [Fact]
+    public void IsInRoster_when_type_is_not_in_the_roster_returns_false()
+    {
+        Assert.False(ProductionRules.IsInRoster(BuildingKind.LandFactory, Side.Blue, "does-not-exist"));
+    }
+
+    [Fact]
+    public void CanSideProduce_when_state_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("state", () => ProductionRules.CanSideProduce(null!, Side.Blue));
+    }
+
+    [Fact]
+    public void ValidateBuild_when_state_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("state", () => ProductionRules.ValidateBuild(null!, Side.Blue, HexCoord.Zero, "m1a1"));
+    }
 }

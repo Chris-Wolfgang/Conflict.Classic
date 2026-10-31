@@ -87,4 +87,12 @@ public class CaptureRulesTests : IClassFixture<CatalogFixture>
         Assert.Single(flips);
         Assert.Equal(Side.Blue, flips[cityCoord]);
     }
+
+    [Fact]
+    public void ComputeFlips_when_state_is_null_throws_ArgumentNullException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() => CaptureRules.ComputeFlips(null!, Side.Blue));
+
+        Assert.Equal("state", ex.ParamName);
+    }
 }

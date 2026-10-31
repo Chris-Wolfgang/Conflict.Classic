@@ -64,4 +64,32 @@ public class GameRunnerSmokeTests
         Assert.Equal(Side.Blue, final.Winner);
         Assert.Equal(8, final.TurnNumber);
     }
+
+    [Fact]
+    public async Task RunAsync_when_initialState_is_null_throws_ArgumentNullException()
+    {
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            "initialState",
+            () => GameRunner.RunAsync(null!, new RandomTestStrategy(1), new RandomTestStrategy(2)));
+    }
+
+    [Fact]
+    public async Task RunAsync_when_blueStrategy_is_null_throws_ArgumentNullException()
+    {
+        var state = new GameEngine().StartGame(await MissionLoader.LoadMission01Async(), randomSeed: 1);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            "blueStrategy",
+            () => GameRunner.RunAsync(state, null!, new RandomTestStrategy(2)));
+    }
+
+    [Fact]
+    public async Task RunAsync_when_redStrategy_is_null_throws_ArgumentNullException()
+    {
+        var state = new GameEngine().StartGame(await MissionLoader.LoadMission01Async(), randomSeed: 1);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            "redStrategy",
+            () => GameRunner.RunAsync(state, new RandomTestStrategy(1), null!));
+    }
 }
