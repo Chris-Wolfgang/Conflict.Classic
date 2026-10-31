@@ -91,4 +91,38 @@ public class UnitStatsTests
     {
         Assert.Equal(2, UnitStats.DefenseBonus(Terrain.Forest, BuildingKind.City));
     }
+
+    [Theory]
+    [InlineData(MovementDomain.Helicopter, 1)]
+    [InlineData(MovementDomain.Fighter, 1)]
+    [InlineData(MovementDomain.Foot, null)]
+    [InlineData(MovementDomain.Tread, null)]
+    public void TerrainCost_when_hex_has_port_is_passable_only_to_air_units(MovementDomain domain, int? expected)
+    {
+        Assert.Equal(expected, UnitStats.TerrainCost(domain, Terrain.Sea, BuildingKind.Port));
+    }
+
+    [Fact]
+    public void TerrainCost_when_domain_is_undefined_is_impassable()
+    {
+        Assert.Null(UnitStats.TerrainCost((MovementDomain)99, Terrain.Plains, building: null));
+    }
+
+    [Fact]
+    public void TerrainCost_when_terrain_is_undefined_is_impassable_to_ground_units()
+    {
+        Assert.Null(UnitStats.TerrainCost(MovementDomain.Tread, (Terrain)99, building: null));
+    }
+
+    [Fact]
+    public void TerrainCost_when_building_is_undefined_is_impassable()
+    {
+        Assert.Null(UnitStats.TerrainCost(MovementDomain.Tread, Terrain.Plains, (BuildingKind)99));
+    }
+
+    [Fact]
+    public void DefenseBonus_when_building_is_undefined_returns_zero()
+    {
+        Assert.Equal(0, UnitStats.DefenseBonus(Terrain.Forest, (BuildingKind)99));
+    }
 }

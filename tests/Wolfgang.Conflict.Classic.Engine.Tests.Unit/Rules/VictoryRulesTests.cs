@@ -53,4 +53,12 @@ public class VictoryRulesTests : IClassFixture<CatalogFixture>
 
         Assert.Equal(Side.Red, VictoryRules.DetermineWinner(StateWith(red)));
     }
+
+    [Fact]
+    public void DetermineWinner_when_state_is_null_throws_ArgumentNullException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() => VictoryRules.DetermineWinner(null!));
+
+        Assert.Equal("state", ex.ParamName);
+    }
 }

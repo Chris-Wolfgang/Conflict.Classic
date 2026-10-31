@@ -90,4 +90,32 @@ public class MapDefinitionTests
         Assert.Equal(expected, coords.Count);
         Assert.Equal(expected, coords.Distinct().Count());
     }
+
+    [Fact]
+    public void Constructor_when_name_is_null_throws_ArgumentNullException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() => new MapDefinition(null!, 1, 1, AllPlains(1, 1)));
+
+        Assert.Equal("name", ex.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_when_tiles_is_null_throws_ArgumentNullException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() => new MapDefinition("test", 1, 1, null!));
+
+        Assert.Equal("tiles", ex.ParamName);
+    }
+
+    [Theory]
+    [InlineData(0, 3, "width")]
+    [InlineData(-1, 3, "width")]
+    [InlineData(4, 0, "height")]
+    [InlineData(4, -1, "height")]
+    public void EnumerateCoords_when_a_dimension_is_not_positive_throws_ArgumentOutOfRangeException(int width, int height, string paramName)
+    {
+        var ex = Assert.Throws<ArgumentOutOfRangeException>(() => MapDefinition.EnumerateCoords(width, height).ToList());
+
+        Assert.Equal(paramName, ex.ParamName);
+    }
 }
