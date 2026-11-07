@@ -8,7 +8,7 @@ public class HexPathfinderTests
     private static int? UniformCost(HexCoord _) => 1;
 
     [Fact]
-    public void Start_equals_goal_returns_single_hex_path()
+    public void FindPath_when_start_equals_goal_returns_single_hex_path()
     {
         var path = HexPathfinder.FindPath(HexCoord.Zero, HexCoord.Zero, UniformCost);
 
@@ -18,7 +18,7 @@ public class HexPathfinderTests
     }
 
     [Fact]
-    public void Straight_east_path_has_correct_cost_and_length()
+    public void FindPath_when_goal_is_straight_east_returns_path_with_correct_cost_and_length()
     {
         var goal = new HexCoord(3, 0);
 
@@ -32,7 +32,7 @@ public class HexPathfinderTests
     }
 
     [Fact]
-    public void Returns_null_when_goal_is_unreachable()
+    public void FindPath_when_goal_is_unreachable_returns_null()
     {
         // Everything is impassable except the start.
         Func<HexCoord, int?> stepCost = h => h == HexCoord.Zero ? 0 : null;
@@ -43,7 +43,7 @@ public class HexPathfinderTests
     }
 
     [Fact]
-    public void Routes_around_impassable_hex()
+    public void FindPath_when_impassable_hex_blocks_the_line_routes_around_it()
     {
         // Block the direct east-east cell (1,0); the path must detour.
         var blocked = new HexCoord(1, 0);
@@ -57,7 +57,7 @@ public class HexPathfinderTests
     }
 
     [Fact]
-    public void Higher_cost_terrain_is_preferred_only_when_shorter()
+    public void FindPath_when_direct_hex_is_expensive_takes_cheaper_detour()
     {
         // (1,0) costs 10; detour through (1,-1) and (0,1) etc. costs 1 each.
         // Direct path: 0,0 -> 1,0 -> 2,0 = 10+1 = 11
@@ -73,7 +73,7 @@ public class HexPathfinderTests
     }
 
     [Fact]
-    public void MaxCost_excludes_paths_above_threshold()
+    public void FindPath_when_cost_exceeds_maxCost_returns_null()
     {
         var path = HexPathfinder.FindPath(HexCoord.Zero, new HexCoord(5, 0), UniformCost, maxCost: 3);
 
@@ -81,7 +81,7 @@ public class HexPathfinderTests
     }
 
     [Fact]
-    public void Null_stepCost_throws()
+    public void FindPath_when_stepCost_is_null_throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
             HexPathfinder.FindPath(HexCoord.Zero, new HexCoord(1, 0), stepCost: null!));

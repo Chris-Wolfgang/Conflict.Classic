@@ -32,7 +32,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Ground_unit_on_friendly_city_can_supply_from_building()
+    public void AvailableSource_when_ground_unit_is_on_friendly_city_returns_building()
     {
         var tiles = MapDefinition.EnumerateCoords(3, 1)
             .Select(c => c == new HexCoord(1, 0)
@@ -45,7 +45,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Air_unit_on_friendly_airbase_can_supply_from_building()
+    public void AvailableSource_when_air_unit_is_on_friendly_airbase_returns_building()
     {
         var tiles = MapDefinition.EnumerateCoords(3, 1)
             .Select(c => c == new HexCoord(1, 0)
@@ -58,7 +58,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Ground_unit_on_airbase_has_no_supply_source()
+    public void AvailableSource_when_ground_unit_is_on_airbase_returns_null()
     {
         var tiles = MapDefinition.EnumerateCoords(3, 1)
             .Select(c => c == new HexCoord(1, 0)
@@ -71,7 +71,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Ground_unit_on_neutral_city_can_supply_from_building()
+    public void AvailableSource_when_ground_unit_is_on_neutral_city_returns_building()
     {
         var tiles = MapDefinition.EnumerateCoords(3, 1)
             .Select(c => c == new HexCoord(1, 0)
@@ -84,7 +84,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Ground_unit_on_enemy_city_can_still_supply()
+    public void AvailableSource_when_ground_unit_is_on_enemy_city_returns_building()
     {
         // Per the original game, a unit refuels/repairs at any city
         // regardless of ownership (and captures it by holding it).
@@ -99,7 +99,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void Unit_already_supplied_this_turn_has_no_source()
+    public void AvailableSource_when_unit_already_supplied_this_turn_returns_null()
     {
         var tiles = MapDefinition.EnumerateCoords(3, 1)
             .Select(c => c == new HexCoord(1, 0)
@@ -112,7 +112,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ApplySupply_from_building_refuels_rearms_and_repairs()
+    public void ApplySupply_when_source_is_building_refuels_rearms_and_repairs()
     {
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, HexCoord.Zero) with
         {
@@ -131,7 +131,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ApplySupply_from_vehicle_does_not_repair()
+    public void ApplySupply_when_source_is_vehicle_does_not_repair()
     {
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, HexCoord.Zero) with
         {
@@ -148,7 +148,7 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
     }
 
     [Fact]
-    public void ApplySupply_caps_at_max_hit_points()
+    public void ApplySupply_when_repair_would_exceed_max_caps_at_max_hit_points()
     {
         var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, HexCoord.Zero) with
         {

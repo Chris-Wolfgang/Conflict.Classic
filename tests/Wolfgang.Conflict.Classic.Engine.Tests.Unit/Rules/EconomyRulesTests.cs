@@ -13,7 +13,7 @@ public class EconomyRulesTests
     [InlineData(BuildingKind.Hq, 0)]
     [InlineData(BuildingKind.LandFactory, 0)]
     [InlineData(BuildingKind.Port, 0)]
-    public void BuildingIncomePerTurn_only_city_and_airbase_generate(BuildingKind building, int expected)
+    public void BuildingIncomePerTurn_when_building_kind_is_given_only_city_and_airbase_generate_income(BuildingKind building, int expected)
     {
         Assert.Equal(expected, EconomyRules.BuildingIncomePerTurn(building));
     }
@@ -23,7 +23,7 @@ public class EconomyRulesTests
     [InlineData(6000, 3000)]
     [InlineData(2400, 1200)]
     [InlineData(6301, 3150)]
-    public void LoserPenalty_is_half_production_cost(int productionCost, int expected)
+    public void LoserPenalty_when_unit_is_lost_is_half_production_cost(int productionCost, int expected)
     {
         Assert.Equal(expected, EconomyRules.LoserPenalty(productionCost));
     }
@@ -34,7 +34,7 @@ public class EconomyRulesTests
     [InlineData(MatchupTier.Equal,           300)]
     [InlineData(MatchupTier.AtAdvantage,     300)]
     [InlineData(MatchupTier.TotalVictory,    300)]
-    public void WinnerReward_scales_with_upset_magnitude(MatchupTier tier, int expected)
+    public void WinnerReward_when_matchup_is_given_scales_with_upset_magnitude(MatchupTier tier, int expected)
     {
         Assert.Equal(expected, EconomyRules.WinnerReward(tier));
     }

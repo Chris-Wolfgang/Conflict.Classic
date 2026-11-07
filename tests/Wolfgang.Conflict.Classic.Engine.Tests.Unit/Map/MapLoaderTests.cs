@@ -21,7 +21,7 @@ public class MapLoaderTests
         """;
 
     [Fact]
-    public void LoadFromJson_parses_tiny_map()
+    public void LoadFromJson_when_json_is_a_tiny_map_parses_it()
     {
         var map = MapLoader.LoadFromJson(TinyJson);
 
@@ -42,19 +42,19 @@ public class MapLoaderTests
     }
 
     [Fact]
-    public void LoadFromJson_null_throws()
+    public void LoadFromJson_when_json_is_null_throws()
     {
         Assert.Throws<ArgumentNullException>(() => MapLoader.LoadFromJson(null!));
     }
 
     [Fact]
-    public void LoadFromJson_malformed_throws()
+    public void LoadFromJson_when_json_is_malformed_throws()
     {
         Assert.Throws<ArgumentException>(() => MapLoader.LoadFromJson("{ not json"));
     }
 
     [Fact]
-    public async Task LoadEmbeddedAsync_loads_mission01()
+    public async Task LoadEmbeddedAsync_when_resource_is_mission01_loads_it()
     {
         var map = await MapLoader.LoadEmbeddedAsync("Wolfgang.Conflict.Classic.Engine.Maps.mission01.json");
 
@@ -64,14 +64,14 @@ public class MapLoaderTests
     }
 
     [Fact]
-    public async Task LoadEmbeddedAsync_missing_resource_throws()
+    public async Task LoadEmbeddedAsync_when_resource_is_missing_throws()
     {
         await Assert.ThrowsAsync<ArgumentException>(
             () => MapLoader.LoadEmbeddedAsync("Wolfgang.Conflict.Classic.Engine.Maps.does_not_exist.json"));
     }
 
     [Fact]
-    public async Task Mission01_has_one_factory_per_side()
+    public async Task LoadEmbeddedAsync_when_resource_is_mission01_has_one_factory_per_side()
     {
         // There is no separate HQ building in the manual's model — the
         // commander tank's "H" badge is the HQ. Each side has one Factory
