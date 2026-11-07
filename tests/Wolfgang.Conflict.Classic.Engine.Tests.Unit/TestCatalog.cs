@@ -36,9 +36,6 @@ internal static class TestCatalog
     /// <summary>M60A3 — Blue battle tank (the factory-buildable MBT; M1A1 is HQ-only).</summary>
     public static UnitTypeDefinition Tank => Catalog.Get("m60a3");
 
-    /// <summary>AH-1S Huey Cobra — Blue helicopter.</summary>
-    public static UnitTypeDefinition Helicopter => Catalog.Get("ah1s");
-
     /// <summary>F-4E Phantom II — Blue fighter.</summary>
     public static UnitTypeDefinition Fighter => Catalog.Get("f4e");
 
