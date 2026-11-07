@@ -159,4 +159,35 @@ public class SupplyRulesTests : IClassFixture<CatalogFixture>
 
         Assert.Equal(UnitStats.MaxHitPoints, supplied.HitPoints);
     }
+
+    [Fact]
+    public void AvailableSource_when_state_is_null_throws_ArgumentNullException()
+    {
+        var tank = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
+
+        var ex = Assert.Throws<ArgumentNullException>(() => SupplyRules.AvailableSource(null!, tank));
+
+        Assert.Equal("state", ex.ParamName);
+    }
+
+    [Fact]
+    public void AvailableSource_when_unit_is_null_throws_ArgumentNullException()
+    {
+        var state = BuildState(
+            MapDefinition.EnumerateCoords(1, 1).Select(c => new Tile(c, Terrain.Plains, Building: null, Owner: null)),
+            1,
+            1);
+
+        var ex = Assert.Throws<ArgumentNullException>(() => SupplyRules.AvailableSource(state, null!));
+
+        Assert.Equal("unit", ex.ParamName);
+    }
+
+    [Fact]
+    public void ApplySupply_when_unit_is_null_throws_ArgumentNullException()
+    {
+        var ex = Assert.Throws<ArgumentNullException>(() => SupplyRules.ApplySupply(null!, SupplyRules.SupplySource.Building));
+
+        Assert.Equal("unit", ex.ParamName);
+    }
 }

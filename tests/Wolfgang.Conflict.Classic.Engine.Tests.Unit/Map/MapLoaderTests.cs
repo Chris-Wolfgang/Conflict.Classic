@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using Wolfgang.Conflict.Classic.Engine.Hex;
 using Wolfgang.Conflict.Classic.Engine.Map;
 using Wolfgang.Conflict.Classic.Engine.Players;
@@ -84,5 +86,70 @@ public class MapLoaderTests
         Assert.Contains(factories, t => t.Owner == Side.Blue);
         Assert.Contains(factories, t => t.Owner == Side.Red);
         Assert.Empty(map.Tiles.Values.Where(t => t.Building == BuildingKind.Hq));
+    }
+
+    [Fact]
+    public void LoadFromJson_when_json_is_the_null_literal_throws_ArgumentException()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => MapLoader.LoadFromJson("null"));
+
+        Assert.Equal("json", ex.ParamName);
+    }
+
+    [Fact]
+    public void LoadFromJson_when_tiles_array_is_missing_throws_ArgumentException()
+    {
+        const string json = """{ "name": "no-tiles", "width": 1, "height": 1 }""";
+
+        var ex = Assert.Throws<ArgumentException>(() => MapLoader.LoadFromJson(json));
+
+        Assert.Contains("'tiles'", ex.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task LoadFromStreamAsync_when_stream_is_null_throws_ArgumentNullException()
+    {
+        var ex = await Assert.ThrowsAsync<ArgumentNullException>(() => MapLoader.LoadFromStreamAsync(null!));
+
+        Assert.Equal("stream", ex.ParamName);
+    }
+
+    [Fact]
+    public async Task LoadFromStreamAsync_when_json_is_malformed_throws_ArgumentException_wrapping_JsonException()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("{ not json"));
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() => MapLoader.LoadFromStreamAsync(stream));
+
+        Assert.IsAssignableFrom<JsonException>(ex.InnerException);
+    }
+
+    [Fact]
+    public async Task LoadFromStreamAsync_when_json_is_the_null_literal_throws_ArgumentException()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("null"));
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() => MapLoader.LoadFromStreamAsync(stream));
+
+        Assert.Equal("stream", ex.ParamName);
+    }
+
+    [Fact]
+    public async Task LoadFromStreamAsync_when_json_is_a_tiny_map_parses_it()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(TinyJson));
+
+        var map = await MapLoader.LoadFromStreamAsync(stream);
+
+        Assert.Equal("tiny", map.Name);
+        Assert.Equal(2, map.Tiles.Count);
+    }
+
+    [Fact]
+    public async Task LoadEmbeddedAsync_when_resourceName_is_null_throws_ArgumentNullException()
+    {
+        var ex = await Assert.ThrowsAsync<ArgumentNullException>(() => MapLoader.LoadEmbeddedAsync(null!));
+
+        Assert.Equal("resourceName", ex.ParamName);
     }
 }
