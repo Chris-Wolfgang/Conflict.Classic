@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 
-public class EndTurnTests
+public class EndTurnTests : IClassFixture<CatalogFixture>
 {
     [Fact]
     public async Task EndTurn_swaps_active_side()

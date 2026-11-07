@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Wolfgang.Conflict.Classic.Engine.Tests.Game;
 
-public class AttackUnitTests
+public class AttackUnitTests : IClassFixture<CatalogFixture>
 {
     private static GameState BuildPlainsState(params Unit[] units)
     {

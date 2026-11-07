@@ -3,14 +3,32 @@ using Wolfgang.Conflict.Classic.Engine.Units;
 namespace Wolfgang.Conflict.Classic.Engine.Tests;
 
 /// <summary>
-/// Shared test fixture exposing the embedded unit catalog plus convenient
+/// Shared test helper exposing the embedded unit catalog plus convenient
 /// accessors for representative unit types, so tests need not thread the
-/// catalog or unit-type ids everywhere.
+/// catalog or unit-type ids everywhere. The catalog is loaded asynchronously
+/// by <see cref="CatalogFixture"/>; test classes that use this helper
+/// implement <c>IClassFixture&lt;CatalogFixture&gt;</c>.
 /// </summary>
 internal static class TestCatalog
 {
-    /// <summary>The full embedded catalog, loaded once.</summary>
-    public static UnitCatalog Catalog { get; } = UnitCatalog.LoadEmbeddedAsync().GetAwaiter().GetResult();
+    private static readonly Lazy<Task<UnitCatalog>> Loader = new(() => UnitCatalog.LoadEmbeddedAsync());
+
+
+
+    /// <summary>Loads the embedded catalog once; later calls return the same task.</summary>
+    public static Task EnsureLoadedAsync() => Loader.Value;
+
+
+
+    /// <summary>
+    /// The full embedded catalog. Valid once <see cref="CatalogFixture"/> has
+    /// run for the calling test class.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The catalog has not been loaded yet.</exception>
+    public static UnitCatalog Catalog
+        => Loader.IsValueCreated && Loader.Value.Status == TaskStatus.RanToCompletion
+            ? Loader.Value.Result
+            : throw new InvalidOperationException("TestCatalog used before CatalogFixture loaded it. Add IClassFixture<CatalogFixture> to the test class.");
 
     /// <summary>US Infantry — Blue foot soldier.</summary>
     public static UnitTypeDefinition Infantry => Catalog.Get("us-infantry");
