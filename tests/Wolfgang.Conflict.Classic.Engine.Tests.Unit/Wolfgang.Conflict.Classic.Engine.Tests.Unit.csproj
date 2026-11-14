@@ -12,7 +12,18 @@
 
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <!--
+      xunit.runner.visualstudio 2.8.x ships only net462 and net6.0 adapters, so on
+      netcoreapp3.1 and net5.0 the test host finds no adapter and runs zero tests.
+      Those two slots stay on 2.4.5 (netcoreapp3.1 adapter); every other slot keeps 2.8.2.
+    -->
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5"
+                      Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0'">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"
+                      Condition="'$(TargetFramework)' != 'netcoreapp3.1' And '$(TargetFramework)' != 'net5.0'">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
