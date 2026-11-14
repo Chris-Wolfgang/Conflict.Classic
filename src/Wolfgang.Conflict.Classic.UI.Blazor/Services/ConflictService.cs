@@ -26,6 +26,13 @@ public sealed class ConflictService
     private readonly IPlayerStrategy _aiStrategy = new GreedyAiStrategy();
     private readonly IJSRuntime _js;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConflictService"/> class.
+    /// </summary>
+    /// <param name="js">
+    /// The JavaScript runtime used to call the page's <c>conflictDownloadText</c> shim
+    /// when <see cref="SaveLogAsync"/> saves the event log.
+    /// </param>
     public ConflictService(IJSRuntime js)
     {
         _js = js;
