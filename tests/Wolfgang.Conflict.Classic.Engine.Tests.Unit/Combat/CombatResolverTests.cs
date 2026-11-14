@@ -1,0 +1,163 @@
+using Wolfgang.Conflict.Classic.Engine.Combat;
+using Wolfgang.Conflict.Classic.Engine.Game;
+using Wolfgang.Conflict.Classic.Engine.Hex;
+using Wolfgang.Conflict.Classic.Engine.Map;
+using Wolfgang.Conflict.Classic.Engine.Players;
+using Wolfgang.Conflict.Classic.Engine.Units;
+using Xunit;
+
+namespace Wolfgang.Conflict.Classic.Engine.Tests.Combat;
+
+public class CombatResolverTests : IClassFixture<CatalogFixture>
+{
+    private sealed class FixedRng(int value) : IRandomSource
+    {
+        public int NextInt(int min, int max) => value;
+    }
+
+    private static GameState OpenMapState(params Unit[] units)
+    {
+        var map = new MapDefinition("plains", 10, 5,
+            MapDefinition.EnumerateCoords(10, 5)
+                .Select(c => new Tile(c, Terrain.Plains, Building: null, Owner: null)));
+        var dict = new Dictionary<UnitId, Unit>();
+        foreach (var u in units)
+        {
+            dict[u.Id] = u;
+        }
+        return new GameState(
+            map,
+            TestCatalog.Catalog,
+            dict,
+            new Dictionary<HexCoord, Side>(),
+            Side.Blue,
+            turnNumber: 1,
+            phase: GamePhase.PlayerTurn,
+            funds: new Dictionary<Side, int> { [Side.Blue] = 0, [Side.Red] = 0 },
+            winner: null,
+            randomSeed: 1);
+    }
+
+    [Fact]
+    public void Resolve_when_tank_attacks_infantry_inflicts_damage_and_defender_counters()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+        var state = OpenMapState(atk, def);
+
+        var result = CombatResolver.Resolve(state, atk, def, new FixedRng(0));
+
+        // BattleTank vs Infantry is a TotalVictory matchup => base attack 11;
+        // defense 0 (plains), shooter at full HP, roll 0.
+        Assert.Equal(11, result.DamageToDefender);
+        Assert.False(result.DefenderDestroyed); // 15 HP - 11 = 4
+        Assert.True(result.DefenderCountered);  // Infantry can still chip a Tank, so it counters.
+    }
+
+    [Fact]
+    public void Resolve_when_defender_is_killed_defender_does_not_counter()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        // Wounded infantry: 5 HP, dies to Tank hit.
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0)) with { HitPoints = 5 };
+        var state = OpenMapState(atk, def);
+
+        var result = CombatResolver.Resolve(state, atk, def, new FixedRng(0));
+
+        Assert.True(result.DefenderDestroyed);
+        Assert.False(result.DefenderCountered);
+        Assert.Equal(0, result.DamageToAttacker);
+    }
+
+    [Fact]
+    public void Resolve_when_fighter_strafes_tank_inflicts_chip_damage_and_defender_counters()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Fighter, new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Tank,    new HexCoord(1, 0));
+        var state = OpenMapState(atk, def);
+
+        var result = CombatResolver.Resolve(state, atk, def, new FixedRng(0));
+
+        // Fighter strafing Tank: CompleteDefeat tier => base 2, plains defense 0.
+        Assert.Equal(2, result.DamageToDefender);
+        Assert.False(result.DefenderDestroyed);
+        // Tank's coaxial MG can plink back at the Fighter (CompleteDefeat
+        // tier for the Tank too) — both take light chip damage.
+        Assert.True(result.DefenderCountered);
+        Assert.Equal(1, result.DamageToAttacker);
+    }
+
+    [Fact]
+    public void Resolve_when_defender_is_in_forest_terrain_reduces_damage()
+    {
+        // Same fighters but defender is in a forest hex (defense +3).
+        var tiles = MapDefinition.EnumerateCoords(10, 5)
+            .Select(c => new Tile(c, c == new HexCoord(1, 0) ? Terrain.Forest : Terrain.Plains, Building: null, Owner: null));
+        var map = new MapDefinition("mixed", 10, 5, tiles);
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Fighter, new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Fighter, new HexCoord(1, 0));
+        var dict = new Dictionary<UnitId, Unit> { [atk.Id] = atk, [def.Id] = def };
+        var state = new GameState(
+            map,
+            TestCatalog.Catalog,
+            dict,
+            new Dictionary<HexCoord, Side>(),
+            Side.Blue,
+            turnNumber: 1,
+            phase: GamePhase.PlayerTurn,
+            funds: new Dictionary<Side, int> { [Side.Blue] = 0, [Side.Red] = 0 },
+            winner: null,
+            randomSeed: 1);
+
+        var result = CombatResolver.Resolve(state, atk, def, new FixedRng(0));
+
+        // Fighter base vs Fighter = 6, defense = 3, roll = 0 => 3 damage.
+        Assert.Equal(3, result.DamageToDefender);
+    }
+
+    [Fact]
+    public void Resolve_when_state_is_null_throws_ArgumentNullException()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+
+        Assert.Throws<ArgumentNullException>("state", () => CombatResolver.Resolve(null!, atk, def, new FixedRng(0)));
+    }
+
+    [Fact]
+    public void Resolve_when_attacker_is_null_throws_ArgumentNullException()
+    {
+        var def = Unit.FullStrength(new UnitId(2), Side.Red, TestCatalog.Infantry, new HexCoord(1, 0));
+
+        Assert.Throws<ArgumentNullException>("attacker", () => CombatResolver.Resolve(OpenMapState(def), null!, def, new FixedRng(0)));
+    }
+
+    [Fact]
+    public void Resolve_when_defender_is_null_throws_ArgumentNullException()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank, new HexCoord(0, 0));
+
+        Assert.Throws<ArgumentNullException>("defender", () => CombatResolver.Resolve(OpenMapState(atk), atk, null!, new FixedRng(0)));
+    }
+
+    [Fact]
+    public void Resolve_when_rng_is_null_throws_ArgumentNullException()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+
+        Assert.Throws<ArgumentNullException>("rng", () => CombatResolver.Resolve(OpenMapState(atk, def), atk, def, null!));
+    }
+
+    [Fact]
+    public void Resolve_when_attack_is_resolved_result_names_both_units()
+    {
+        var atk = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Tank,     new HexCoord(0, 0));
+        var def = Unit.FullStrength(new UnitId(2), Side.Red,  TestCatalog.Infantry, new HexCoord(1, 0));
+
+        var result = CombatResolver.Resolve(OpenMapState(atk, def), atk, def, new FixedRng(0));
+
+        Assert.Equal(atk.Id, result.AttackerId);
+        Assert.Equal(def.Id, result.DefenderId);
+    }
+}

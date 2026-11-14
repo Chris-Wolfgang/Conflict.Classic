@@ -1,0 +1,276 @@
+using Wolfgang.Conflict.Classic.Engine.Game;
+using Wolfgang.Conflict.Classic.Engine.Hex;
+using Wolfgang.Conflict.Classic.Engine.Map;
+using Wolfgang.Conflict.Classic.Engine.Players;
+using Wolfgang.Conflict.Classic.Engine.Rules;
+using Wolfgang.Conflict.Classic.Engine.Units;
+using Xunit;
+
+namespace Wolfgang.Conflict.Classic.Engine.Tests.Rules;
+
+public class ProductionRulesTests : IClassFixture<CatalogFixture>
+{
+    private static GameState SingleUnitState(Unit unit)
+    {
+        var tile = new Tile(HexCoord.Zero, Terrain.Plains, Building: null, Owner: null);
+        var map = new MapDefinition("one", 1, 1, [tile]);
+        return new GameState(map, TestCatalog.Catalog,
+            new Dictionary<UnitId, Unit> { [unit.Id] = unit },
+            new Dictionary<HexCoord, Side>(),
+            Side.Blue, turnNumber: 1, phase: GamePhase.PlayerTurn,
+            new Dictionary<Side, int> { [Side.Blue] = 0, [Side.Red] = 0 },
+            winner: null, randomSeed: 1);
+    }
+
+    [Theory]
+    [InlineData(BuildingKind.LandFactory, UnitCategory.BattleTank, true)]
+    [InlineData(BuildingKind.LandFactory, UnitCategory.Infantry, true)]
+    [InlineData(BuildingKind.LandFactory, UnitCategory.Fighter, false)]
+    [InlineData(BuildingKind.AirFactory, UnitCategory.Fighter, true)]
+    [InlineData(BuildingKind.AirFactory, UnitCategory.Helicopter, true)]
+    [InlineData(BuildingKind.AirFactory, UnitCategory.BattleTank, false)]
+    [InlineData(BuildingKind.City, UnitCategory.Infantry, false)]
+    public void CanBuildCategoryAt_when_category_and_building_are_given_matches_design(BuildingKind building, UnitCategory category, bool expected)
+    {
+        Assert.Equal(expected, ProductionRules.CanBuildCategoryAt(building, category));
+    }
+
+    [Fact]
+    public void ProducibleAt_when_blue_uses_land_factory_returns_curated_six()
+    {
+        var producible = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
+
+        // Curated roster: Liberator (infantry), Commando, M151 jeep, M60A3,
+        // M48 SAM, M247 AA-gun. The HQ M1A1 must NOT be buildable.
+        Assert.Equal(6, producible.Count);
+        var ids = new HashSet<string>(producible.Select(d => d.Id), StringComparer.Ordinal);
+        Assert.Contains("us-infantry", ids);
+        Assert.Contains("us-commando", ids);
+        Assert.Contains("m151", ids);
+        Assert.Contains("m60a3", ids);
+        Assert.Contains("m48", ids);
+        Assert.Contains("m247", ids);
+        Assert.DoesNotContain("m1a1", ids);
+        Assert.DoesNotContain("t80", ids);
+    }
+
+    [Fact]
+    public void ProducibleAt_when_red_uses_airbase_returns_infantry_plus_five_air()
+    {
+        var producible = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.AirFactory, Side.Red);
+
+        Assert.Equal(6, producible.Count);
+        // Infantry leads the airbase roster (airlift / paratroopers).
+        Assert.Equal("red-infantry", producible[0].Id);
+        var ids = new HashSet<string>(producible.Select(d => d.Id), StringComparer.Ordinal);
+        Assert.Contains("mi24", ids);
+        Assert.Contains("mi28", ids);
+        Assert.Contains("su25", ids);
+        Assert.Contains("mig23", ids);
+        Assert.Contains("mig29", ids);
+    }
+
+    [Fact]
+    public void ProducibleAt_when_any_factory_is_given_lists_infantry_first()
+    {
+        var blueLand = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
+        var redLand  = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Red);
+        var blueAir  = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.AirFactory, Side.Blue);
+        var redAir   = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.AirFactory, Side.Red);
+
+        Assert.Equal(UnitCategory.Infantry, blueLand[0].Category);
+        Assert.Equal(UnitCategory.Infantry, redLand[0].Category);
+        Assert.Equal(UnitCategory.Infantry, blueAir[0].Category);
+        Assert.Equal(UnitCategory.Infantry, redAir[0].Category);
+    }
+
+    [Fact]
+    public void ProducibleAt_when_sides_are_compared_rosters_are_complementary()
+    {
+        // Every map-present unit must be in its side's factory roster, and
+        // every roster slot on one side must have a counterpart slot on the
+        // other (NATO/Soviet pairings).
+        var blueLand = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
+        var redLand  = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Red);
+        var blueAir  = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.AirFactory, Side.Blue);
+        var redAir   = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.AirFactory, Side.Red);
+
+        Assert.Equal(blueLand.Count, redLand.Count);
+        Assert.Equal(blueAir.Count, redAir.Count);
+
+        // Each land roster's first entry is the side's infantry.
+        Assert.Equal(UnitCategory.Infantry, blueLand[0].Category);
+        Assert.Equal(UnitCategory.Infantry, redLand[0].Category);
+
+        // Same category mix between matched factories.
+        Assert.Equal(
+            blueLand.Select(d => d.Category).OrderBy(c => c),
+            redLand.Select(d => d.Category).OrderBy(c => c));
+        Assert.Equal(
+            blueAir.Select(d => d.Category).OrderBy(c => c),
+            redAir.Select(d => d.Category).OrderBy(c => c));
+    }
+
+    [Fact]
+    public void ProducibleAt_when_called_returns_roster_sorted_by_price_ascending()
+    {
+        var blueLand = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue);
+
+        for (var i = 1; i < blueLand.Count; i++)
+        {
+            Assert.True(blueLand[i - 1].ProductionCost <= blueLand[i].ProductionCost,
+                $"Roster not sorted at index {i}: {blueLand[i - 1].Id}={blueLand[i - 1].ProductionCost} > {blueLand[i].Id}={blueLand[i].ProductionCost}");
+        }
+    }
+
+    [Fact]
+    public async Task AffordableAt_when_funds_are_limited_filters_unlocked_slots_by_FP()
+    {
+        // F.P. doesn't get spent on a build, but it gates which roster
+        // slots are visible — units above the player's current F.P. are
+        // hidden until they save up enough.
+        var mission = await MissionLoader.LoadMission01Async();
+        var engine = new GameEngine();
+        var start = engine.StartGame(mission, randomSeed: 1);
+
+        var cheapest = ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.LandFactory, Side.Blue)[0];
+        var funds = cheapest.ProductionCost; // exact threshold for the cheapest slot
+        var state = new GameState(start.Map, start.Catalog, start.Units, start.BuildingOwners,
+            start.NextToAct, start.TurnNumber, start.Phase,
+            new Dictionary<Side, int> { [Side.Blue] = funds, [Side.Red] = 0 },
+            start.Winner, start.RandomSeed);
+
+        var affordable = ProductionRules.AffordableAt(state, BuildingKind.LandFactory, Side.Blue);
+
+        Assert.NotEmpty(affordable);
+        Assert.All(affordable, d => Assert.True(d.ProductionCost <= funds));
+        Assert.Contains(affordable, d => string.Equals(d.Id, cheapest.Id, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ProductionCost_when_unit_is_infantry_is_zero_FP_per_manual()
+    {
+        // Per the NES manual (page 25), infantry F.P. = 0. This makes
+        // infantry naturally always-available without any engine special case.
+        Assert.Equal(0, TestCatalog.Get("us-infantry").ProductionCost);
+        Assert.Equal(0, TestCatalog.Get("red-infantry").ProductionCost);
+    }
+
+    [Fact]
+    public async Task BuildUnit_when_side_is_broke_succeeds_for_infantry()
+    {
+        var mission = await MissionLoader.LoadMission01Async();
+        var engine = new GameEngine();
+        var start = engine.StartGame(mission, randomSeed: 1);
+        var broke = new GameState(start.Map, start.Catalog, start.Units, start.BuildingOwners,
+            start.NextToAct, start.TurnNumber, start.Phase,
+            new Dictionary<Side, int> { [Side.Blue] = 0, [Side.Red] = 0 },
+            start.Winner, start.RandomSeed);
+
+        var after = engine.BuildUnit(broke, new HexCoord(1, 6), "us-infantry");
+
+        Assert.Equal(0, after.Funds[Side.Blue]);
+        // Infantry is queued like everything else — it materialises on
+        // the factory hex at the start of Blue's next turn.
+        Assert.True(after.PendingProduction.TryGetValue(Side.Blue, out var pending));
+        Assert.Equal("us-infantry", pending!.TypeId);
+        Assert.Equal(new HexCoord(1, 6), pending.FactoryCoord);
+    }
+
+    [Fact]
+    public async Task AffordableAt_when_side_is_broke_still_includes_infantry()
+    {
+        // Infantry has cost 0 so it is always visible regardless of F.P.
+        var mission = await MissionLoader.LoadMission01Async();
+        var engine = new GameEngine();
+        var start = engine.StartGame(mission, randomSeed: 1);
+        var broke = new GameState(start.Map, start.Catalog, start.Units, start.BuildingOwners,
+            start.NextToAct, start.TurnNumber, start.Phase,
+            new Dictionary<Side, int> { [Side.Blue] = 0, [Side.Red] = 0 },
+            start.Winner, start.RandomSeed);
+
+        var land = ProductionRules.AffordableAt(broke, BuildingKind.LandFactory, Side.Blue);
+        var air  = ProductionRules.AffordableAt(broke, BuildingKind.AirFactory, Side.Blue);
+
+        Assert.Contains(land, d => d.Category == UnitCategory.Infantry);
+        Assert.Contains(air,  d => d.Category == UnitCategory.Infantry);
+        // And only infantry — everything else is locked at 0 F.P.
+        Assert.All(land, d => Assert.Equal(UnitCategory.Infantry, d.Category));
+        Assert.All(air,  d => Assert.Equal(UnitCategory.Infantry, d.Category));
+    }
+
+    [Fact]
+    public void CanSideProduce_when_a_unit_has_not_moved_returns_true()
+    {
+        var unit = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Infantry, HexCoord.Zero);
+
+        Assert.True(ProductionRules.CanSideProduce(SingleUnitState(unit), Side.Blue));
+    }
+
+    [Fact]
+    public void CanSideProduce_when_all_units_have_moved_returns_false()
+    {
+        var unit = Unit.FullStrength(new UnitId(1), Side.Blue, TestCatalog.Infantry, HexCoord.Zero) with { HasMoved = true };
+
+        Assert.False(ProductionRules.CanSideProduce(SingleUnitState(unit), Side.Blue));
+    }
+
+    [Theory]
+    [InlineData(BuildingKind.LandFactory, true)]
+    [InlineData(BuildingKind.AirFactory, true)]
+    [InlineData(BuildingKind.Port, true)]
+    [InlineData(BuildingKind.City, false)]
+    [InlineData(BuildingKind.Hq, false)]
+    public void IsProductionBuilding_when_building_is_given_returns_expected(BuildingKind building, bool expected)
+    {
+        Assert.Equal(expected, ProductionRules.IsProductionBuilding(building));
+    }
+
+    [Fact]
+    public void ProducibleAt_when_catalog_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("catalog", () => ProductionRules.ProducibleAt(null!, BuildingKind.LandFactory, Side.Blue));
+    }
+
+    [Fact]
+    public void ProducibleAt_when_building_has_no_roster_returns_empty()
+    {
+        Assert.Empty(ProductionRules.ProducibleAt(TestCatalog.Catalog, BuildingKind.City, Side.Blue));
+    }
+
+    [Fact]
+    public void AffordableAt_when_state_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("state", () => ProductionRules.AffordableAt(null!, BuildingKind.LandFactory, Side.Blue));
+    }
+
+    [Fact]
+    public void IsInRoster_when_typeId_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("typeId", () => ProductionRules.IsInRoster(BuildingKind.LandFactory, Side.Blue, null!));
+    }
+
+    [Fact]
+    public void IsInRoster_when_building_has_no_roster_returns_false()
+    {
+        Assert.False(ProductionRules.IsInRoster(BuildingKind.City, Side.Blue, "m1a1"));
+    }
+
+    [Fact]
+    public void IsInRoster_when_type_is_not_in_the_roster_returns_false()
+    {
+        Assert.False(ProductionRules.IsInRoster(BuildingKind.LandFactory, Side.Blue, "does-not-exist"));
+    }
+
+    [Fact]
+    public void CanSideProduce_when_state_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("state", () => ProductionRules.CanSideProduce(null!, Side.Blue));
+    }
+
+    [Fact]
+    public void ValidateBuild_when_state_is_null_throws_ArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>("state", () => ProductionRules.ValidateBuild(null!, Side.Blue, HexCoord.Zero, "m1a1"));
+    }
+}
