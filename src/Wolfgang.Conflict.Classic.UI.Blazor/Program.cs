@@ -10,4 +10,4 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton<ConflictService>();
 
-await builder.Build().RunAsync();
+await builder.Build().RunAsync().ConfigureAwait(false);
