@@ -52,7 +52,7 @@ public sealed class ConflictService
     public async Task SaveLogAsync()
     {
         var text = string.Join("\n", _eventLog);
-        await _js.InvokeVoidAsync("conflictDownloadText", "conflict-log.txt", text);
+        await _js.InvokeVoidAsync("conflictDownloadText", "conflict-log.txt", text).ConfigureAwait(false);
     }
 
     private void Log(string entry)
