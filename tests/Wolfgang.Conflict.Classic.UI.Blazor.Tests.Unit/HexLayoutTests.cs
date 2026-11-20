@@ -25,6 +25,12 @@ public class HexLayoutTests
     }
 
     [Fact]
+    public void HexWidth_when_read_is_twice_hex_size()
+    {
+        Assert.Equal(2.0 * HexLayout.HexSize, HexLayout.HexWidth, precision: 3);
+    }
+
+    [Fact]
     public void BoardSize_when_dimensions_are_mission01_is_positive()
     {
         var (w, h) = HexLayout.BoardSize(12, 10);
