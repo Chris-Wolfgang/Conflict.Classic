@@ -57,6 +57,8 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 | .NET Core | .NET Core 3.1 |
 | .NET | .NET 5.0, .NET 6.0, .NET 7.0, .NET 8.0, .NET 9.0, .NET 10.0 |
 
+Pull requests run the tests on five legs: Linux x64 (`netcoreapp3.1` and `net5.0`+), Windows x64 (every TFM), macOS ARM64 (`net6.0`+), and two ARM64 gates, `Stage 4: Linux ARM64 Tests` (`ubuntu-24.04-arm`) and `Stage 5: Windows ARM64 Tests` (`windows-11-arm`), both `net6.0` and later. .NET Framework runs on Windows x64 only.
+
 ---
 
 ## 🔍 Code Quality & Static Analysis
