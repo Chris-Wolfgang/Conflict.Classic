@@ -1,0 +1,500 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #e0e0e0;
+    font-family: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+}
+
+main {
+    padding: 1rem;
+}
+
+h1 {
+    color: #fce19c;
+    letter-spacing: 0.1em;
+}
+
+.game-page {
+    max-width: 1200px;
+}
+
+.game-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.game-header .status {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.95rem;
+    color: #cfd2d8;
+}
+
+.game-header .side {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.game-header .side.blue { color: #6890e8; }
+.game-header .side.red  { color: #e86060; }
+
+.hex-board {
+    display: block;
+    image-rendering: pixelated;
+    background: #0a0a18;
+    border: 2px solid #1c2030;
+    max-width: 100%;
+    height: auto;
+}
+
+.start-button, .action-button {
+    background: #3868c0;
+    color: #fff;
+    border: 2px solid #fce19c;
+    padding: 0.5rem 1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.start-button { padding: 0.75rem 1.25rem; font-size: 1rem; }
+
+.start-button:hover, .action-button:hover { background: #4878d0; }
+
+.action-button:disabled {
+    background: #283050;
+    color: #8090a8;
+    border-color: #5c6478;
+    cursor: not-allowed;
+}
+
+.action-button.supply {
+    background: #207040;
+    border-color: #3cd44c;
+}
+
+.action-button.supply:hover { background: #2a8050; }
+
+.action-button.attack {
+    background: #b03028;
+    border-color: #e86048;
+}
+
+.action-button.attack:hover { background: #c83a30; }
+
+.attack-confirm {
+    background: #2a1820;
+    border: 2px solid #e86048;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.attack-confirm h2 {
+    color: #e86048;
+    margin: 0 0 0.4rem 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+}
+
+.attack-confirm p { margin: 0.2rem 0; }
+.attack-confirm .blue { color: #6890e8; }
+.attack-confirm .red  { color: #e86060; }
+.attack-confirm .outlook { color: #cfd2d8; }
+.attack-confirm .controls { margin-top: 0.5rem; }
+
+.board-and-panel {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.side-panel {
+    flex: 0 0 240px;
+    background: #14182a;
+    border: 2px solid #1c2030;
+    padding: 0.75rem 1rem;
+    color: #cfd2d8;
+    font-size: 0.9rem;
+}
+
+.side-panel h2 {
+    color: #fce19c;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+}
+
+.side-panel .unit-stats {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 1rem 0;
+}
+
+.side-panel .unit-stats li {
+    padding: 0.15rem 0;
+    border-bottom: 1px dotted #2a2e44;
+}
+
+.side-panel .unit-stats li.low {
+    color: #e86060;
+    font-weight: 600;
+}
+
+.side-panel .warn { color: #fce19c; font-style: italic; }
+
+.side-panel .hint {
+    color: #8a90a4;
+    font-style: italic;
+}
+
+.side-panel .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.game-over {
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #2a1830;
+    border: 2px solid #fce19c;
+    color: #fce19c;
+    font-weight: 700;
+}
+
+.game-over .blue { color: #6890e8; }
+.game-over .red  { color: #e86060; }
+
+.unit-cue-card {
+    font-family: Consolas, monospace;
+    background: #14182a;
+    border: 2px solid #fce19c;
+    border-radius: 4px;
+    padding: 4px 6px;
+    color: #e8e8e8;
+    font-size: 10px;
+    line-height: 1.35;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+}
+
+.unit-cue-card.blue { border-left: 5px solid #3868c0; }
+.unit-cue-card.red  { border-left: 5px solid #c83030; }
+
+.unit-cue-card .cue-name {
+    font-weight: 700;
+    color: #fce19c;
+    font-size: 11px;
+}
+
+.unit-cue-card .cue-sub {
+    color: #aab0c0;
+    margin-bottom: 2px;
+}
+
+.unit-cue-card .cue-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 6px;
+}
+
+.unit-cue-card .cue-status {
+    margin-top: 2px;
+    color: #8a90a4;
+    font-style: italic;
+}
+
+#blazor-error-ui {
+    background: #b00;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0,0,0,0.6);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+/* Production menu --------------------------------------------------------- */
+
+.production-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 8, 18, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.board-and-panel {
+    position: relative;
+}
+
+.production-menu {
+    width: min(560px, 92%);
+    background: #14182a;
+    border: 3px solid #3868c0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
+}
+
+.production-menu.red {
+    border-color: #c83030;
+}
+
+.production-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+}
+
+.production-header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #fce18c;
+    letter-spacing: 0.05em;
+}
+
+.production-funds {
+    font-weight: bold;
+    color: #e8e8e8;
+}
+
+.production-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+}
+
+.production-slot {
+    appearance: none;
+    background: #1c2030;
+    color: #e8e8e8;
+    border: 2px solid #2a3050;
+    border-radius: 4px;
+    padding: 0.7rem 0.4rem;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.12s, background 0.12s;
+}
+
+.production-slot.affordable:hover:not(:disabled) {
+    border-color: #fce18c;
+    background: #232842;
+}
+
+.production-slot.empty {
+    background: #0d1018;
+    color: #555;
+}
+
+.production-slot:disabled {
+    cursor: default;
+}
+
+.production-slot.built {
+    border-color: #fce18c;
+    background: #2a2410;
+    box-shadow: 0 0 0 3px rgba(252, 225, 140, 0.45) inset;
+}
+
+.production-slot.ai-preview {
+    /* Superseded by the louder rule further down. Kept as a single
+       fallback color so a missing class state can't fall through to
+       the default disabled grey. */
+    border-color: #4ee04e;
+}
+
+.slot-name {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.slot-cost {
+    font-size: 0.8rem;
+    color: #a0a0c0;
+}
+
+.slot-cost-locked {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.slot-empty-marker {
+    font-size: 1.4rem;
+    color: #444;
+}
+
+.production-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.production-hint {
+    color: #a0a0c0;
+    font-size: 0.85rem;
+}
+
+.production-slot.selected:not(:disabled) {
+    border-color: #fce18c;
+    background: #2a2410;
+    box-shadow: 0 0 0 2px #fce18c inset;
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-button.build {
+    background: #2a4a1c;
+    border: 1px solid #5c8030;
+    color: #e8f0d8;
+}
+
+.action-button.build:disabled {
+    background: #1a1f10;
+    border-color: #303820;
+    color: #555;
+    cursor: default;
+}
+
+.factory-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.6rem;
+}
+
+.factory-tab {
+    appearance: none;
+    background: #1c2030;
+    color: #a0a0c0;
+    border: 1px solid #2a3050;
+    border-radius: 4px 4px 0 0;
+    padding: 0.4rem 0.9rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.factory-tab.active {
+    background: #2a3050;
+    color: #fce18c;
+    border-color: #fce18c;
+}
+
+.factory-tab:disabled {
+    cursor: default;
+}
+
+/* AI's chosen slot — bright green outline with a pulsing halo so the
+   player can see at a glance which unit the AI is buying. No banner;
+   the box itself carries the meaning. */
+.production-slot.ai-preview {
+    border: 4px solid #4ee04e !important;
+    transform: scale(1.06);
+    box-shadow:
+        0 0 0 2px rgba(78, 224, 78, 0.4) inset,
+        0 0 24px 6px rgba(120, 240, 120, 0.85);
+    animation: ai-slot-pulse 0.7s ease-in-out infinite alternate;
+    z-index: 1;
+}
+
+@keyframes ai-slot-pulse {
+    from {
+        box-shadow:
+            0 0 0 2px rgba(78, 224, 78, 0.35) inset,
+            0 0 14px 3px rgba(120, 240, 120, 0.55);
+    }
+    to {
+        box-shadow:
+            0 0 0 4px rgba(140, 255, 140, 0.9) inset,
+            0 0 34px 10px rgba(140, 255, 140, 1.0);
+    }
+}
+
+.production-slot.ai-preview .slot-name {
+    color: #d8ffd8;
+    font-size: 1.05rem;
+}
+
+.event-log {
+    margin-top: 1rem;
+    background: #0d1018;
+    border: 1px solid #2a3050;
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    max-width: 1200px;
+}
+
+.event-log-header {
+    display: flex;
+    justify-content: space-between;
+    color: #a0a0c0;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+}
+
+.event-log-count {
+    color: #fce18c;
+}
+
+.event-log-scroll {
+    max-height: 220px;
+    overflow-y: auto;
+    font-family: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #d0d0e0;
+}
+
+.event-log-line {
+    padding: 0.1rem 0;
+    border-bottom: 1px dotted #1c2030;
+    white-space: pre-wrap;
+}
+
+.event-log-save {
+    appearance: none;
+    background: #1c2030;
+    color: #e8e8e8;
+    border: 1px solid #2a3050;
+    border-radius: 3px;
+    padding: 0.2rem 0.6rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.event-log-save:hover {
+    border-color: #fce18c;
+    color: #fce18c;
+}
