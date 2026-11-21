@@ -3,11 +3,10 @@
 Anyone can check that a published release of Conflict.Classic was built from the tagged source, without
 trusting this repository's CI. This page is for a consumer who has never seen the repository.
 
-> **Status.** This page describes the fleet reproducible-builds standard as it will apply here. The build inputs
-> (`global.json` SDK pin, literal copyright year, LF-normalized generated sources) are being put in place, but the
-> `reproducible-build.yaml` workflow and the release's `SHA256SUMS.txt` / `BUILD-MANIFEST.txt` assets have not landed
-> in this repository yet (they come from repo-template), and no release has been cut with them. Until then there is no
-> published hash list to compare against.
+> **Status.** All the pieces of the fleet reproducible-builds standard are in place: the build inputs (`global.json`
+> SDK pin, literal copyright year, LF-normalized generated sources), the `reproducible-build.yaml` workflow, and the
+> release's `SHA256SUMS.txt` / `BUILD-MANIFEST.txt` assets. No release has been cut with them yet, so until the next
+> tag there is no published hash list to compare against.
 
 ## What "reproducible" means here
 
