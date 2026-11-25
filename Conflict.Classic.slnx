@@ -58,7 +58,13 @@
   </Folder>
   <Folder Name="/benchmarks/" />
   <Folder Name="/examples/" />
-  <Folder Name="/src/" />
-  <Folder Name="/tests/" />
+  <Folder Name="/src/">
+    <Project Path="src/Wolfgang.Conflict.Classic.Engine/Wolfgang.Conflict.Classic.Engine.csproj" />
+    <Project Path="src/Wolfgang.Conflict.Classic.UI.Blazor/Wolfgang.Conflict.Classic.UI.Blazor.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Wolfgang.Conflict.Classic.Engine.Tests.Unit/Wolfgang.Conflict.Classic.Engine.Tests.Unit.csproj" />
+    <Project Path="tests/Wolfgang.Conflict.Classic.UI.Blazor.Tests.Unit/Wolfgang.Conflict.Classic.UI.Blazor.Tests.Unit.csproj" />
+  </Folder>
 </Solution>
 
